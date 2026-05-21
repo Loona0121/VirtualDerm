@@ -1,0 +1,646 @@
+@model IEnumerable<DermaAI.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Appointments";
+    var todayAppts = Model.Where(a => a.ScheduledDate.Date == DateTime.Today).ToList();
+    var otherAppts = Model.Where(a => a.ScheduledDate.Date != DateTime.Today).ToList();
+}
+
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+        .filter-card form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-card .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-card label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-card input, .filter-card select {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 0.88rem;
+            color: #374151;
+            outline: none;
+            min-width: 160px;
+        }
+
+    .filter-btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.88rem;
+    }
+
+    .clear-btn {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .section-label span {
+            background: #20c7b3;
+            color: white;
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+        }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .appt-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+        .appt-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            border-color: #20c7b3;
+        }
+
+    .appt-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+        .avatar.blue {
+            background: linear-gradient(135deg, #3b82f6, #93c5fd);
+        }
+
+        .avatar.purple {
+            background: linear-gradient(135deg, #a855f7, #d8b4fe);
+        }
+
+        .avatar.orange {
+            background: linear-gradient(135deg, #f97316, #fdba74);
+        }
+
+    .status {
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .confirmed {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .done {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .cancelled {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .appt-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0f172a;
+        margin-bottom: 2px;
+    }
+
+    .appt-doctor {
+        color: #20c7b3;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .appt-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #94a3b8;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+    }
+
+    .dots-btn {
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0 6px;
+        line-height: 1;
+        border-radius: 8px;
+        transition: all 0.15s;
+    }
+
+        .dots-btn:hover {
+            background: #f1f5f9;
+            color: #374151;
+        }
+
+    .dropdown-menu {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .dropdown-item {
+        font-size: 0.88rem;
+        padding: 10px 16px;
+    }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+        }
+
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        margin-bottom: 24px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #f8fafc;
+    }
+
+    th {
+        text-align: left;
+        padding: 12px 16px;
+        color: #334155;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 14px 16px;
+        border-top: 1px solid #f1f5f9;
+        color: #475569;
+        font-size: 0.88rem;
+    }
+
+    .patient-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mini-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+    }
+
+        .mini-avatar.blue {
+            background: linear-gradient(135deg, #3b82f6, #93c5fd);
+        }
+
+        .mini-avatar.purple {
+            background: linear-gradient(135deg, #a855f7, #d8b4fe);
+        }
+
+        .mini-avatar.orange {
+            background: linear-gradient(135deg, #f97316, #fdba74);
+        }
+
+    .action-links a {
+        text-decoration: none;
+        margin-right: 8px;
+        font-weight: 600;
+        color: #20c7b3;
+        font-size: 0.82rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #94a3b8;
+    }
+
+    .results-info {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+    }
+
+    .new-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        color: white;
+        padding: 11px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.88rem;
+    }
+
+    /* MODAL STYLES */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 24px;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #f1f5f9;
+        padding: 16px 24px;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .detail-value {
+        color: #0f172a;
+        font-weight: 500;
+        font-size: 0.88rem;
+    }
+
+    .modal-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+    }
+
+    .btn-confirm-delete {
+        background: #e11d48;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<!-- Header -->
+<div class="top-bar">
+    <div>
+        <div class="page-title">Appointments</div>
+        <div style="color:#94a3b8; font-size:0.85rem;">Manage and filter all patient appointments</div>
+    </div>
+    <a asp-action="Create" class="new-btn">+ New Appointment</a>
+</div>
+
+<!-- Filter -->
+<div class="filter-card">
+    <form method="get">
+        <div class="form-group">
+            <label>Search</label>
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="Patient or doctor name..." />
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="Pending" selected="@(ViewBag.Status == "Pending")">Pending</option>
+                <option value="Confirmed" selected="@(ViewBag.Status == "Confirmed")">Confirmed</option>
+                <option value="Done" selected="@(ViewBag.Status == "Done")">Done</option>
+                <option value="Cancelled" selected="@(ViewBag.Status == "Cancelled")">Cancelled</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="date" value="@ViewBag.Date" />
+        </div>
+        <button type="submit" class="filter-btn">Filter</button>
+        <a href="/Appointments" class="clear-btn">Clear</a>
+    </form>
+</div>
+
+<div class="results-info">@Model.Count() appointment(s) found</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state" style="background:white; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+        <div style="font-size:2.5rem; margin-bottom:10px;">📅</div>
+        <div style="font-weight:600; color:#64748b;">No appointments found</div>
+        <div style="font-size:0.85rem; margin-top:6px;">Try adjusting your filters</div>
+    </div>
+}
+else
+{
+    <!-- TODAY'S APPOINTMENTS — CARDS -->
+    @if (todayAppts.Any())
+    {
+        <div class="section-label">Today's Appointments <span>@todayAppts.Count</span></div>
+        <div class="cards-grid">
+            @foreach (var item in todayAppts)
+            {
+                var initials = string.Join("", (item.Patient?.FullName ?? "?").Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+                var colors = new[] { "", "blue", "purple", "orange" };
+                var colorClass = colors[item.Id % 4];
+                <div class="appt-card">
+                    <div class="appt-card-top">
+                        <div class="avatar @colorClass">@initials</div>
+                        <div class="dropdown">
+                            <button class="dots-btn" data-bs-toggle="dropdown">⋯</button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                       onclick="showDetails(@item.Id, '@item.Patient?.FullName', '@item.DoctorName', '@item.ScheduledDate.ToString("MMM dd, yyyy")', '@item.ScheduledDate.ToString("hh:mm tt")', '@item.Status', '@(item.Notes ?? "—")')">
+                                        Details
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#"
+                                       onclick="confirmDelete(@item.Id, '@item.Patient?.FullName')">
+                                        Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="appt-name">@item.Patient?.FullName</div>
+                    <div class="appt-doctor">Dr. @item.DoctorName</div>
+                    <div class="appt-meta">🕐 @item.ScheduledDate.ToString("hh:mm tt")</div>
+                    <div class="appt-meta">📅 @item.ScheduledDate.ToString("MMMM dd, yyyy")</div>
+                    <div style="margin-top:10px;">
+                        <span class="status @item.Status?.ToLower()">@item.Status</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- ALL OTHER APPOINTMENTS — TABLE -->
+    @if (otherAppts.Any())
+    {
+        <div class="section-label" style="margin-top: 8px;">All Appointments <span>@otherAppts.Count</span></div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in otherAppts)
+                    {
+                        var initials = string.Join("", (item.Patient?.FullName ?? "?").Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+                        var colors = new[] { "", "blue", "purple", "orange" };
+                        var colorClass = colors[item.Id % 4];
+                        <tr>
+                            <td>
+                                <div class="patient-cell">
+                                    <div class="mini-avatar @colorClass">@initials</div>
+                                    <strong>@item.Patient?.FullName</strong>
+                                </div>
+                            </td>
+                            <td>Dr. @item.DoctorName</td>
+                            <td>@item.ScheduledDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                            <td><span class="status @item.Status?.ToLower()">@item.Status</span></td>
+                            <td>@(string.IsNullOrEmpty(item.Notes) ? "—" : item.Notes.Length > 30 ? item.Notes.Substring(0, 30) + "..." : item.Notes)</td>
+                            <td class="action-links">
+                                <a href="#" onclick="showDetails(@item.Id, '@item.Patient?.FullName', '@item.DoctorName', '@item.ScheduledDate.ToString("MMM dd, yyyy")', '@item.ScheduledDate.ToString("hh:mm tt")', '@item.Status', '@(item.Notes ?? "—")')">Details</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" style="color: #d97706;">Edit</a>
+                                <a href="#" onclick="confirmDelete(@item.Id, '@item.Patient?.FullName')" style="color:#e11d48;">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<!-- DETAILS MODAL -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Appointment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-avatar" id="modalAvatar"></div>
+                <div class="detail-row">
+                    <span class="detail-label">Patient</span>
+                    <span class="detail-value" id="modalPatient"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Doctor</span>
+                    <span class="detail-value" id="modalDoctor"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value" id="modalDate"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time</span>
+                    <span class="detail-value" id="modalTime"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" id="modalStatus"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Notes</span>
+                    <span class="detail-value" id="modalNotes"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center" style="padding: 32px 24px;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">⚠️</div>
+                <div style="font-weight:700; font-size:1rem; margin-bottom:8px;">Delete Appointment?</div>
+                <div style="color:#94a3b8; font-size:0.85rem; margin-bottom:24px;">
+                    This will permanently remove <strong id="deletePatientName"></strong>'s appointment.
+                </div>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <div style="display:flex; gap:10px; justify-content:center;">
+                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-confirm-delete">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDetails(id, patient, doctor, date, time, status, notes) {
+        document.getElementById('modalPatient').textContent = patient;
+        document.getElementById('modalDoctor').textContent = 'Dr. ' + doctor;
+        document.getElementById('modalDate').textContent = date;
+        document.getElementById('modalTime').textContent = time;
+        document.getElementById('modalStatus').textContent = status;
+        document.getElementById('modalNotes').textContent = notes;
+
+        // Set avatar initials
+        var words = patient.split(' ');
+        var initials = words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        document.getElementById('modalAvatar').textContent = initials;
+
+        new bootstrap.Modal(document.getElementById('detailsModal')).show();
+    }
+
+    function confirmDelete(id, patientName) {
+        document.getElementById('deletePatientName').textContent = patientName;
+        document.getElementById('deleteForm').action = '/Appointments/Delete/' + id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>

@@ -1,0 +1,96 @@
+@model DermaAI.Models.Appointment
+
+@{
+    ViewData["Title"] = "Appointment Details";
+    var initials = string.Join("", (Model.Patient?.FullName ?? "?")
+        .Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+}
+
+<style>
+    .page-title { font-size: 2rem; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+    .details-card {
+        background: white; border-radius: 24px;
+        padding: 36px; max-width: 650px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .patient-header {
+        display: flex; align-items: center; gap: 16px;
+        padding-bottom: 24px; margin-bottom: 24px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .avatar {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white; display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 1.3rem;
+    }
+    .patient-name { font-size: 1.2rem; font-weight: 700; color: #0f172a; }
+    .patient-sub { color: #94a3b8; font-size: 0.85rem; }
+    .detail-row {
+        display: flex; justify-content: space-between;
+        padding: 14px 0; border-bottom: 1px solid #f8fafc;
+        align-items: center;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: #94a3b8; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; }
+    .detail-value { color: #0f172a; font-weight: 500; font-size: 0.92rem; }
+    .status { padding: 5px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+    .pending { background: #fef3c7; color: #d97706; }
+    .confirmed { background: #dcfce7; color: #16a34a; }
+    .done { background: #dbeafe; color: #2563eb; }
+    .cancelled { background: #fee2e2; color: #dc2626; }
+    .action-row { display: flex; gap: 12px; margin-top: 28px; }
+    .edit-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        color: white; padding: 12px 24px; border-radius: 12px;
+        text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    }
+    .back-btn {
+        background: #f1f5f9; color: #64748b;
+        padding: 12px 24px; border-radius: 12px;
+        text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    }
+</style>
+
+<div class="page-title">Appointment Details</div>
+<p style="color:#94a3b8; font-size:0.88rem; margin-bottom:24px;">Full information about this appointment</p>
+
+<div class="details-card">
+    <div class="patient-header">
+        <div class="avatar">@initials</div>
+        <div>
+            <div class="patient-name">@Model.Patient?.FullName</div>
+            <div class="patient-sub">Patient</div>
+        </div>
+    </div>
+
+    <div class="detail-row">
+        <span class="detail-label">Doctor</span>
+        <span class="detail-value">Dr. @Model.DoctorName</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Scheduled Date</span>
+        <span class="detail-value">@Model.ScheduledDate.ToString("MMMM dd, yyyy")</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Time</span>
+        <span class="detail-value">@Model.ScheduledDate.ToString("hh:mm tt")</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="status @Model.Status?.ToLower()">@Model.Status</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Notes</span>
+        <span class="detail-value">@(string.IsNullOrEmpty(Model.Notes) ? "—" : Model.Notes)</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Created</span>
+        <span class="detail-value">@Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</span>
+    </div>
+
+    <div class="action-row">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edit</a>
+        <a asp-action="Index" class="back-btn">Back</a>
+    </div>
+</div>

@@ -1,0 +1,104 @@
+@model DermaAI.Models.Patient
+
+@{
+    ViewData["Title"] = "Edit Patient";
+}
+
+<style>
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 36px;
+        max-width: 700px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 28px;
+        color: #0f172a;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #334155;
+    }
+
+    .form-control {
+        border-radius: 14px;
+        border: 1px solid #dbeafe;
+        padding: 14px;
+        margin-bottom: 20px;
+        box-shadow: none !important;
+    }
+
+    .form-control:focus {
+        border-color: #20c7b3;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        border: none;
+        color: white;
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+    .back-link {
+        margin-left: 12px;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 600;
+    }
+</style>
+
+<div class="page-title">
+    Edit Patient
+</div>
+
+<div class="form-card">
+
+    <form asp-action="Edit">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+
+        <label asp-for="Age" class="form-label"></label>
+        <input asp-for="Age" class="form-control" />
+
+        <label asp-for="Sex" class="form-label"></label>
+        <select asp-for="Sex" class="form-control">
+            <option>Male</option>
+            <option>Female</option>
+        </select>
+
+        <label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" />
+
+        <label asp-for="ContactNumber" class="form-label"></label>
+        <input asp-for="ContactNumber" class="form-control" />
+
+        <button type="submit" class="submit-btn">
+            Save Changes
+        </button>
+
+        <a asp-action="Index" class="back-link">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

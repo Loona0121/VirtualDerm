@@ -1,0 +1,447 @@
+@model IEnumerable<DermaAI.Models.ChatSession>
+
+@{
+    ViewData["Title"] = "Chat Sessions";
+}
+
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+        .filter-card form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-card .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-card label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-card input {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 0.88rem;
+            color: #374151;
+            outline: none;
+            min-width: 180px;
+        }
+
+    .filter-btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.88rem;
+    }
+
+    .clear-btn {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #f8fafc;
+    }
+
+    th {
+        text-align: left;
+        padding: 12px 16px;
+        color: #334155;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 14px 16px;
+        border-top: 1px solid #f1f5f9;
+        color: #475569;
+        font-size: 0.88rem;
+        vertical-align: top;
+    }
+
+    .patient-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mini-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #16a34a;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .status-closed {
+        background: #f1f5f9;
+        color: #64748b;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .msg-count {
+        background: #eff6ff;
+        color: #3b82f6;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .action-links a {
+        text-decoration: none;
+        margin-right: 8px;
+        font-weight: 600;
+        font-size: 0.82rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px;
+        color: #94a3b8;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    .results-info {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+    }
+
+    .symptoms-text {
+        color: #374151;
+        font-size: 0.85rem;
+    }
+
+    .ai-summary {
+        color: #6b7280;
+        font-size: 0.82rem;
+        font-style: italic;
+    }
+
+    /* MODAL */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 24px;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #f1f5f9;
+        padding: 16px 24px;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8fafc;
+        gap: 16px;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #0f172a;
+        font-weight: 500;
+        font-size: 0.88rem;
+        text-align: right;
+    }
+
+    .btn-confirm-delete {
+        background: #e11d48;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<!-- Header -->
+<div class="top-bar">
+    <div>
+        <div class="page-title">AI Chat Sessions</div>
+        <div style="color:#94a3b8; font-size:0.85rem;">Monitor all AI dermatology consultations</div>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="filter-card">
+    <form method="get">
+        <div class="form-group">
+            <label>Search</label>
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="Patient name or symptoms..." />
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="date" value="@ViewBag.Date" />
+        </div>
+        <button type="submit" class="filter-btn">Filter</button>
+        <a href="/ChatSessions" class="clear-btn">Clear</a>
+    </form>
+</div>
+
+<div class="results-info">@Model.Count() session(s) found</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🤖</div>
+        <div style="font-weight:600; color:#64748b;">No chat sessions yet</div>
+        <div style="font-size:0.85rem; margin-top:6px;">AI chat sessions are started by patients via the chatbot</div>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Initial Symptoms</th>
+                    <th>AI Summary</th>
+                    <th>Messages</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var fullName = item.Patient?.FullName ?? "Unknown";
+                    var initials = string.Join("", fullName.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+                    var msgCount = item.ChatMessages?.Count ?? 0;
+
+                    // Clean markdown from AI summary
+                    var cleanSummary = item.AISummary?
+                        .Replace("**", "")
+                        .Replace("*", "")
+                        .Replace("#", "") ?? "";
+
+                    <tr>
+                        <td>
+                            <div class="patient-cell">
+                                <div class="mini-avatar">@initials</div>
+                                <strong>@fullName</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="symptoms-text">
+                                @(item.InitialSymptoms?.Length > 60 ? item.InitialSymptoms.Substring(0, 60) + "..." : item.InitialSymptoms)
+                            </div>
+                        </td>
+                        <td>
+                            <div class="ai-summary">
+                                @(cleanSummary.Length > 80 ? cleanSummary.Substring(0, 80) + "..." : cleanSummary)
+                            </div>
+                        </td>
+                        <td>
+                            <span class="msg-count">💬 @msgCount</span>
+                        </td>
+                        <td>
+                            <span class="@(item.Status == "Active" ? "status-active" : "status-closed")">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td class="action-links">
+                            <a href="#" onclick="showSession('@fullName', '@item.InitialSymptoms?.Replace("'", "\\'"))', '@cleanSummary.Replace("'", "\\'"))', '@item.Status', '@item.CreatedAt.ToString("MMM dd, yyyy")', @msgCount)" style="color:#20c7b3;">Details</a>
+                            <a href="#" onclick="confirmDelete(@item.Id, '@fullName')" style="color:#e11d48;">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- DETAILS MODAL -->
+<div class="modal fade" id="sessionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">🤖 AI Chat Session Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="detail-label">Patient</span>
+                    <span class="detail-value" id="sPatient"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Initial Symptoms</span>
+                    <span class="detail-value" id="sSymptoms"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">AI Summary</span>
+                    <span class="detail-value" id="sSummary"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" id="sStatus"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value" id="sDate"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Messages</span>
+                    <span class="detail-value" id="sMessages"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center" style="padding: 32px 24px;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">⚠️</div>
+                <div style="font-weight:700; font-size:1rem; margin-bottom:8px;">Delete Chat Session?</div>
+                <div style="color:#94a3b8; font-size:0.85rem; margin-bottom:24px;">
+                    This will permanently remove <strong id="deletePatientName"></strong>'s chat session.
+                </div>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <div style="display:flex; gap:10px; justify-content:center;">
+                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-confirm-delete">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showSession(patient, symptoms, summary, status, date, messages) {
+        document.getElementById('sPatient').textContent = patient;
+        document.getElementById('sSymptoms').textContent = symptoms;
+        document.getElementById('sSummary').textContent = summary;
+        document.getElementById('sStatus').textContent = status;
+        document.getElementById('sDate').textContent = date;
+        document.getElementById('sMessages').textContent = messages + ' messages';
+        new bootstrap.Modal(document.getElementById('sessionModal')).show();
+    }
+
+    function confirmDelete(id, name) {
+        document.getElementById('deletePatientName').textContent = name;
+        document.getElementById('deleteForm').action = '/ChatSessions/Delete/' + id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>

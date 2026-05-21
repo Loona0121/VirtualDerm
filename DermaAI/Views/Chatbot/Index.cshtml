@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "DermaAI Chatbot";
+}
+
+<div class="container mt-4">
+    <h2>🤖 DermaAI — Skin Condition Checker</h2>
+    <p class="text-muted">Describe your skin symptoms and our AI will help identify possible conditions.</p>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5>Start a New Consultation</h5>
+            <form method="post" action="/Chatbot/StartSession">
+                <div class="mb-3">
+                    <label>Patient ID</label>
+                    <input type="number" name="patientId" class="form-control" placeholder="Enter Patient ID" required />
+                </div>
+                <div class="mb-3">
+                    <label>Describe your skin symptoms</label>
+                    <textarea name="initialSymptoms" class="form-control" rows="4"
+                        placeholder="Example: I have red itchy patches on my arm for 3 days, it gets worse at night..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Ask DermaAI 🤖</button>
+            </form>
+        </div>
+    </div>
+</div>

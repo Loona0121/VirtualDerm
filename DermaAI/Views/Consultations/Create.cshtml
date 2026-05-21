@@ -1,0 +1,104 @@
+@model DermaAI.Models.Consultation
+
+@{
+    ViewData["Title"] = "New Consultation";
+    var appointments = ViewBag.Appointments as List<DermaAI.Models.Appointment> ?? new List<DermaAI.Models.Appointment>();
+}
+
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #0f172a;
+    }
+
+    .page-sub {
+        color: #94a3b8;
+        font-size: 0.88rem;
+        margin-bottom: 28px;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 36px;
+        max-width: 650px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #334155;
+        font-size: 0.88rem;
+        display: block;
+    }
+
+    .form-control, .appt-select {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        width: 100%;
+        color: #374151;
+        box-shadow: none;
+        outline: none;
+        background: white;
+    }
+
+        .form-control:focus, .appt-select:focus {
+            border-color: #20c7b3;
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        border: none;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .back-link {
+        margin-left: 14px;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 600;
+    }
+</style>
+
+<div class="page-title">New Consultation</div>
+<div class="page-sub">Record doctor notes and prescription after an appointment</div>
+
+<div class="form-card">
+    <form asp-action="Create">
+
+        <label class="form-label">Appointment</label>
+        <select name="AppointmentId" class="appt-select" required>
+            <option value="">-- Select Appointment --</option>
+            @foreach (var a in appointments)
+            {
+                <option value="@a.Id">@a.Patient?.FullName — Dr. @a.DoctorName (@a.ScheduledDate.ToString("MMM dd, yyyy"))</option>
+            }
+        </select>
+
+        <label class="form-label">Doctor Notes</label>
+        <textarea name="DoctorNotes" class="form-control" rows="4"
+                  placeholder="Enter diagnosis and observations..." required></textarea>
+
+        <label class="form-label">Prescription <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+        <input name="Prescription" class="form-control" placeholder="e.g. Hydrocortisone cream 1%, apply twice daily" />
+
+        <label class="form-label">Follow-up Date <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+        <input name="FollowUpDate" type="datetime-local" class="form-control" />
+
+        <div style="margin-top: 8px;">
+            <button type="submit" class="submit-btn">Save Consultation</button>
+            <a asp-action="Index" class="back-link">Cancel</a>
+        </div>
+    </form>
+</div>

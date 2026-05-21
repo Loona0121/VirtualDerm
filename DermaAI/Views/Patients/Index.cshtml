@@ -1,0 +1,151 @@
+@model IEnumerable<DermaAI.Models.Patient>
+
+@{
+    ViewData["Title"] = "Patients";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .add-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+    .add-btn:hover {
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .modern-table thead th {
+        padding: 18px;
+        color: #64748b;
+        font-size: .9rem;
+        font-weight: 600;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modern-table tbody td {
+        padding: 18px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #0f172a;
+        font-weight: 500;
+    }
+
+    .modern-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .action-btn {
+        text-decoration: none;
+        padding: 7px 14px;
+        border-radius: 10px;
+        font-size: .85rem;
+        font-weight: 600;
+        margin-right: 6px;
+    }
+
+    .edit-btn {
+        background: #ecfeff;
+        color: #0891b2;
+    }
+
+    .details-btn {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .delete-btn {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+</style>
+
+<div class="page-header">
+    <div class="page-title">Patients</div>
+
+    <a asp-action="Create" class="add-btn">
+        + Add Patient
+    </a>
+</div>
+
+<div class="table-card">
+
+    <table class="modern-table">
+
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Age</th>
+                <th>Sex</th>
+                <th>Contact Number</th>
+                <th width="260">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FullName</td>
+                    <td>@item.Age</td>
+                    <td>@item.Sex</td>
+                    <td>@item.ContactNumber</td>
+
+                    <td>
+                        <a asp-action="Edit"
+                           asp-route-id="@item.Id"
+                           class="action-btn edit-btn">
+                            Edit
+                        </a>
+
+                        <a asp-action="Details"
+                           asp-route-id="@item.Id"
+                           class="action-btn details-btn">
+                            Details
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.Id"
+                           class="action-btn delete-btn">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

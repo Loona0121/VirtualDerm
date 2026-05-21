@@ -1,0 +1,401 @@
+@model IEnumerable<DermaAI.Models.Consultation>
+
+@{
+    ViewData["Title"] = "Consultations";
+}
+
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+        .filter-card form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-card .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-card label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-card input {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 0.88rem;
+            color: #374151;
+            outline: none;
+            min-width: 180px;
+        }
+
+    .filter-btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.88rem;
+    }
+
+    .clear-btn {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #f8fafc;
+    }
+
+    th {
+        text-align: left;
+        padding: 12px 16px;
+        color: #334155;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        padding: 14px 16px;
+        border-top: 1px solid #f1f5f9;
+        color: #475569;
+        font-size: 0.88rem;
+    }
+
+    .patient-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mini-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+    }
+
+    .action-links a {
+        text-decoration: none;
+        margin-right: 8px;
+        font-weight: 600;
+        font-size: 0.82rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px;
+        color: #94a3b8;
+    }
+
+    .results-info {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+    }
+
+    /* MODAL */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 24px;
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #f1f5f9;
+        padding: 16px 24px;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8fafc;
+        gap: 16px;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #0f172a;
+        font-weight: 500;
+        font-size: 0.88rem;
+        text-align: right;
+    }
+
+    .btn-confirm-delete {
+        background: #e11d48;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #64748b;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .prescription-badge {
+        background: #f0fdf4;
+        color: #16a34a;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .no-prescription {
+        color: #94a3b8;
+        font-style: italic;
+        font-size: 0.82rem;
+    }
+</style>
+
+<!-- Header -->
+<div class="top-bar">
+    <div>
+        <div class="page-title">Consultations</div>
+        <div style="color:#94a3b8; font-size:0.85rem;">View and manage all doctor consultations</div>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="filter-card">
+    <form method="get">
+        <div class="form-group">
+            <label>Search Patient</label>
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="Patient name or doctor notes..." />
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date" name="date" value="@ViewBag.Date" />
+        </div>
+        <button type="submit" class="filter-btn">Filter</button>
+        <a href="/Consultations" class="clear-btn">Clear</a>
+    </form>
+</div>
+
+<div class="results-info">@Model.Count() consultation(s) found</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state" style="background:white; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.04);">
+        <div style="font-size:2.5rem; margin-bottom:10px;">📋</div>
+        <div style="font-weight:600; color:#64748b;">No consultations yet</div>
+        <div style="font-size:0.85rem; margin-top:6px;">Consultations are created by dermatologists after appointments</div>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor Notes</th>
+                    <th>Prescription</th>
+                    <th>Follow-up Date</th>
+                    <th>Date Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var fullName = item.Appointment?.Patient?.FullName ?? "Unknown";
+                    var initials = string.Join("", fullName.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+                    <tr>
+                        <td>
+                            <div class="patient-cell">
+                                <div class="mini-avatar">@initials</div>
+                                <strong>@fullName</strong>
+                            </div>
+                        </td>
+                        <td>@(item.DoctorNotes?.Length > 50 ? item.DoctorNotes.Substring(0, 50) + "..." : item.DoctorNotes)</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Prescription))
+                            {
+                                <span class="prescription-badge">💊 @item.Prescription</span>
+                            }
+                            else
+                            {
+                                <span class="no-prescription">None</span>
+                            }
+                        </td>
+                        <td>@(item.FollowUpDate.HasValue ? item.FollowUpDate.Value.ToString("MMM dd, yyyy") : "—")</td>
+                        <td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td class="action-links">
+                            <a href="#" onclick="showConsultation('@fullName', '@item.DoctorNotes', '@(item.Prescription ?? "None")', '@(item.FollowUpDate.HasValue ? item.FollowUpDate.Value.ToString("MMM dd, yyyy") : "—")', '@item.CreatedAt.ToString("MMM dd, yyyy")')" style="color:#20c7b3;">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" style="color:#3b82f6;">Edit</a>
+                            <a href="#" onclick="confirmDelete(@item.Id, '@fullName')" style="color:#e11d48;">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- DETAILS MODAL -->
+<div class="modal fade" id="consultationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📋 Consultation Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="detail-label">Patient</span>
+                    <span class="detail-value" id="cPatient"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Doctor Notes</span>
+                    <span class="detail-value" id="cNotes"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Prescription</span>
+                    <span class="detail-value" id="cPrescription"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Follow-up Date</span>
+                    <span class="detail-value" id="cFollowup"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date Created</span>
+                    <span class="detail-value" id="cCreated"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center" style="padding: 32px 24px;">
+                <div style="font-size:2.5rem; margin-bottom:12px;">⚠️</div>
+                <div style="font-weight:700; font-size:1rem; margin-bottom:8px;">Delete Consultation?</div>
+                <div style="color:#94a3b8; font-size:0.85rem; margin-bottom:24px;">
+                    This will permanently remove <strong id="deletePatientName"></strong>'s consultation.
+                </div>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <div style="display:flex; gap:10px; justify-content:center;">
+                        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-confirm-delete">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showConsultation(patient, notes, prescription, followup, created) {
+        document.getElementById('cPatient').textContent = patient;
+        document.getElementById('cNotes').textContent = notes;
+        document.getElementById('cPrescription').textContent = prescription;
+        document.getElementById('cFollowup').textContent = followup;
+        document.getElementById('cCreated').textContent = created;
+        new bootstrap.Modal(document.getElementById('consultationModal')).show();
+    }
+
+    function confirmDelete(id, name) {
+        document.getElementById('deletePatientName').textContent = name;
+        document.getElementById('deleteForm').action = '/Consultations/Delete/' + id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>

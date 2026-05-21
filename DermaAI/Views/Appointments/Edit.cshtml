@@ -1,0 +1,88 @@
+@model DermaAI.Models.Appointment
+
+@{
+    ViewData["Title"] = "Edit Appointment";
+    var patients = ViewBag.Patients as List<DermaAI.Models.Patient> ?? new List<DermaAI.Models.Patient>();
+}
+
+
+
+<style>
+    .page-title { font-size: 2rem; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+    .page-sub { color: #94a3b8; font-size: 0.88rem; margin-bottom: 28px; }
+    .form-card {
+        background: white; border-radius: 24px;
+        padding: 36px; max-width: 650px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .form-label { font-weight: 600; margin-bottom: 6px; color: #334155; font-size: 0.88rem; display: block; }
+    .form-control, .form-select, .patient-select {
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 12px 16px !important;
+        margin-bottom: 20px;
+        font-size: 0.9rem; width: 100%;
+        color: #374151; box-shadow: none !important;
+        outline: none; background: white;
+    }
+    .form-control:focus, .patient-select:focus { border-color: #20c7b3 !important; }
+    .submit-btn {
+        background: linear-gradient(135deg, #20c7b3, #58d5c9);
+        border: none; color: white;
+        padding: 14px 28px; border-radius: 12px;
+        font-weight: 600; cursor: pointer; font-size: 0.95rem;
+    }
+    .back-link { margin-left: 14px; text-decoration: none; color: #64748b; font-weight: 600; }
+</style>
+
+<div class="page-title">Edit Appointment</div>
+<div class="page-sub">Update the appointment details below</div>
+
+<div class="form-card">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+
+        <label class="form-label">Patient</label>
+        <select name="PatientId" class="patient-select">
+            <option value="">-- Select Patient --</option>
+            @foreach (var p in patients)
+            {
+                if (p.Id == Model.PatientId)
+                {
+                    <option value="@p.Id" selected>@p.FullName</option>
+                }
+                else
+                {
+                    <option value="@p.Id">@p.FullName</option>
+                }
+            }
+        </select>
+
+        <label class="form-label">Doctor Name</label>
+        <input asp-for="DoctorName" class="form-control" placeholder="e.g. Dr. Juan Santos" />
+
+        <label class="form-label">Scheduled Date & Time</label>
+        <input asp-for="ScheduledDate" type="datetime-local" class="form-control" />
+
+        <label class="form-label">Status</label>
+        <select asp-for="Status" class="patient-select">
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Done">Done</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <label class="form-label">Notes <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any additional notes..."></textarea>
+
+        <div style="margin-top: 8px;">
+            <button type="submit" class="submit-btn">Save Changes</button>
+            <a asp-action="Index" class="back-link">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

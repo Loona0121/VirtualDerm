@@ -1,0 +1,760 @@
+﻿    @{
+        Layout = null;
+        ViewData["Title"] = "VirtualDerm";
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VirtualDerm</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                    font-family: 'Segoe UI', sans-serif;
+                }
+
+                html {
+                    scroll-behavior: smooth;
+                }
+
+                body {
+                    background: #f0fdf9;
+                    color: #0f172a;
+                    overflow-x: hidden;
+                }
+
+                /* NAVBAR */
+                .navbar {
+                    width: 100%;
+                    padding: 20px 80px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    z-index: 1000;
+                    background: rgba(255,255,255,0.95);
+                    backdrop-filter: blur(12px);
+                    border-bottom: 1px solid #e2e8f0;
+                }
+
+                .logo {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    font-size: 1.5rem;
+                    font-weight: 800;
+                    color: #0f172a;
+                    text-decoration: none;
+                }
+
+                .logo-icon {
+                    width: 46px;
+                    height: 46px;
+                    border-radius: 14px;
+                    background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 1.1rem;
+                }
+
+                .nav-links {
+                    display: flex;
+                    align-items: center;
+                    gap: 32px;
+                }
+
+                    .nav-links a {
+                        text-decoration: none;
+                        color: #475569;
+                        font-weight: 500;
+                        font-size: 0.95rem;
+                        transition: 0.2s;
+                    }
+
+                        .nav-links a:hover, .nav-links a.active {
+                            color: #14b8a6;
+                        }
+
+                .login-btn {
+                    padding: 11px 26px;
+                    border-radius: 12px;
+                    background: #0f172a;
+                    color: white !important;
+                    font-weight: 600;
+                }
+
+                /* HERO */
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                padding: 170px 80px 200px;
+                background: linear-gradient(160deg, #f0fdf9 0%, #e0f2fe 100%);
+                position: relative;
+                overflow: hidden;
+            }
+
+                /* LEFT */
+                .hero-text {
+                    flex: 1;
+                    max-width: 560px;
+                    position: relative;
+                    z-index: 5;
+                }
+
+                .hero-badge {
+                    display: inline-block;
+                    background: rgba(45,212,191,0.15);
+                    color: #0d9488;
+                    padding: 8px 18px;
+                    border-radius: 999px;
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    margin-bottom: 24px;
+                    border: 1px solid rgba(45,212,191,0.3);
+                }
+
+                .hero-text h1 {
+                    font-size: 4rem;
+                    line-height: 1.1;
+                    margin-bottom: 20px;
+                    font-weight: 800;
+                    color: #0f172a;
+                }
+
+                    .hero-text h1 span {
+                        color: #14b8a6;
+                    }
+
+                .hero-text p {
+                    color: #64748b;
+                    font-size: 1rem;
+                    line-height: 1.8;
+                    margin-bottom: 36px;
+                }
+
+                .hero-buttons {
+                    display: flex;
+                    gap: 16px;
+                }
+
+                .primary-btn {
+                    padding: 14px 28px;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    font-weight: 700;
+                    color: white;
+                    background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+                    box-shadow: 0 8px 24px rgba(45,212,191,0.3);
+                    transition: 0.3s;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                    .primary-btn:hover {
+                        transform: translateY(-2px);
+                    }
+
+                .secondary-btn {
+                    padding: 14px 28px;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    font-weight: 700;
+                    background: white;
+                    color: #0f172a;
+                    border: 1.5px solid #e2e8f0;
+                    transition: 0.3s;
+                }
+
+                    .secondary-btn:hover {
+                        background: #f8fafc;
+                    }
+
+                /* RIGHT — PHONE MOCKUP */
+                .hero-right {
+                    flex: 1;
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-end;
+                    min-height: 580px;
+                    z-index: 5;
+                }
+
+                /* Leaf decoration */
+                .leaf-decoration {
+                    position: absolute;
+                    left: -20px;
+                    top: 40px;
+                    font-size: 8rem;
+                    opacity: 0.15;
+                    color: #14b8a6;
+                    z-index: 1;
+                }
+
+                /* Phone */
+                .phone-mockup {
+                    position: relative;
+                    z-index: 3;
+                    width: 240px;
+                    background: #0f172a;
+                    border-radius: 40px;
+                    padding: 12px;
+                    box-shadow: 0 30px 80px rgba(15,23,42,0.25);
+                    margin-right: 40px;
+                }
+
+                .phone-screen {
+                    background: white;
+                    border-radius: 30px;
+                    overflow: hidden;
+                    padding: 20px 16px;
+                }
+
+                .phone-greeting {
+                    font-size: 0.7rem;
+                    color: #94a3b8;
+                    margin-bottom: 2px;
+                }
+
+                .phone-name {
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin-bottom: 16px;
+                }
+
+                .phone-appt {
+                    background: #f0fdf9;
+                    border-radius: 14px;
+                    padding: 12px;
+                    margin-bottom: 16px;
+                    border: 1px solid #ccfbf1;
+                }
+
+                .phone-appt-label {
+                    font-size: 0.65rem;
+                    color: #14b8a6;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                }
+
+                .phone-appt-date {
+                    font-size: 0.7rem;
+                    color: #0f172a;
+                    font-weight: 600;
+                }
+
+                .phone-appt-doctor {
+                    font-size: 0.65rem;
+                    color: #64748b;
+                }
+
+                .phone-appt-spec {
+                    font-size: 0.6rem;
+                    color: #94a3b8;
+                }
+
+                .view-btn {
+                    display: inline-block;
+                    margin-top: 8px;
+                    background: #14b8a6;
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: 999px;
+                    font-size: 0.6rem;
+                    font-weight: 600;
+                }
+
+                .phone-qa-label {
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin-bottom: 10px;
+                }
+
+                .phone-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 8px;
+                }
+
+                .phone-grid-item {
+                    background: #f8fafc;
+                    border-radius: 12px;
+                    padding: 10px;
+                    text-align: center;
+                    font-size: 0.6rem;
+                    color: #475569;
+                }
+
+                    .phone-grid-item i {
+                        display: block;
+                        font-size: 1rem;
+                        margin-bottom: 4px;
+                        color: #14b8a6;
+                    }
+
+                /* Doctor image */
+                .doctor-img-container {
+                    position: absolute;
+                    right: -20px;
+                    bottom: 0;
+                    width: 320px;
+                    z-index: 2;
+                }
+
+                    .doctor-img-container img {
+                        width: 100%;
+                        object-fit: cover;
+                        filter: drop-shadow(0 20px 40px rgba(15,23,42,0.15));
+                    }
+
+                /* Floating badges */
+                .float-badge {
+                    position: absolute;
+                    background: white;
+                    border-radius: 16px;
+                    padding: 12px 16px;
+                    box-shadow: 0 8px 24px rgba(15,23,42,0.1);
+                    z-index: 6;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-weight: 700;
+                    font-size: 0.82rem;
+                }
+
+                    .float-badge .badge-icon {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1rem;
+                    }
+
+                .badge-shield {
+                    top: 60px;
+                    right: 20px;
+                }
+
+                    .badge-shield .badge-icon {
+                        background: #e0f2fe;
+                        color: #0ea5e9;
+                    }
+
+                .badge-heart {
+                    bottom: 200px;
+                    right: -10px;
+                }
+
+                    .badge-heart .badge-icon {
+                        background: #ffe4e6;
+                        color: #e11d48;
+                    }   
+
+                /* WAVE */
+            .hero-wave {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                line-height: 0;
+                z-index: 1;
+            }
+
+                .hero-wave svg {
+                    width: 100%;
+                    height: 250px; /* KEEP THICK */
+                    display: block;
+                }
+
+                /* FEATURES */
+            .features-section {
+                background: white;
+                padding: 40px 80px 120px;
+                position: relative;
+                z-index: 5;
+                margin-top: 0px;
+            }
+
+                .section-label {
+                    text-align: center;
+                    color: #14b8a6;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-size: 0.82rem;
+                    margin-bottom: 12px;
+                }
+
+                .section-title {
+                    text-align: center;
+                    font-size: 2.5rem;
+                    font-weight: 800;
+                    margin-bottom: 14px;
+                }
+
+                .section-sub {
+                    text-align: center;
+                    color: #64748b;
+                    max-width: 600px;
+                    margin: 0 auto 60px;
+                    line-height: 1.8;
+                }
+
+                .features-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4,1fr);
+                    gap: 20px;
+                }
+
+                .feature-card {
+                    background: white;
+                    padding: 28px;
+                    border-radius: 20px;
+                    border: 1px solid #f1f5f9;
+                    box-shadow: 0 4px 20px rgba(15,23,42,0.04);
+                    transition: 0.3s;
+                }
+
+                    .feature-card:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+                    }
+
+                .feature-icon {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.3rem;
+                    margin-bottom: 18px;
+                }
+
+                .icon-teal {
+                    background: #ccfbf1;
+                    color: #14b8a6;
+                }
+
+                .icon-purple {
+                    background: #ede9fe;
+                    color: #7c3aed;
+                }
+
+                .icon-blue {
+                    background: #dbeafe;
+                    color: #2563eb;
+                }
+
+                .icon-orange {
+                    background: #ffedd5;
+                    color: #ea580c;
+                }
+
+                .feature-card h3 {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                }
+
+                .feature-card p {
+                    color: #64748b;
+                    font-size: 0.88rem;
+                    line-height: 1.7;
+                }
+
+                /* HOW IT WORKS */
+                .steps-section {
+                    padding: 100px 80px;
+                    background: #0f172a;
+                    color: white;
+                }
+
+                    .steps-section .section-label {
+                        color: #7dd3fc;
+                    }
+
+                    .steps-section .section-title {
+                        color: white;
+                    }
+
+                .steps-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4,1fr);
+                    gap: 24px;
+                    margin-top: 50px;
+                }
+
+                .step-card {
+                    background: rgba(255,255,255,0.06);
+                    padding: 28px;
+                    border-radius: 20px;
+                }
+
+                .step-number {
+                    width: 52px;
+                    height: 52px;
+                    border-radius: 14px;
+                    background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.1rem;
+                    font-weight: 800;
+                    margin-bottom: 18px;
+                }
+
+                .step-card h3 {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                }
+
+                .step-card p {
+                    color: #cbd5e1;
+                    line-height: 1.7;
+                    font-size: 0.88rem;
+                }
+
+                /* CTA */
+                .cta-section {
+                    margin: 60px 80px;
+                    padding: 70px 80px;
+                    border-radius: 32px;
+                    background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+                    text-align: center;
+                    color: white;
+                }
+
+                    .cta-section h2 {
+                        font-size: 2.5rem;
+                        margin-bottom: 14px;
+                        font-weight: 800;
+                    }
+
+                    .cta-section p {
+                        font-size: 1rem;
+                        margin-bottom: 28px;
+                        opacity: 0.9;
+                    }
+
+                .cta-btn {
+                    display: inline-block;
+                    background: white;
+                    color: #0f172a;
+                    padding: 14px 32px;
+                    border-radius: 12px;
+                    font-weight: 700;
+                    text-decoration: none;
+                    transition: 0.3s;
+                }
+
+                    .cta-btn:hover {
+                        transform: translateY(-2px);
+                    }
+
+                /* FOOTER */
+                .footer {
+                    padding: 70px 80px;
+                    background: white;
+                    border-top: 1px solid #e2e8f0;
+                }
+
+                .footer-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4,1fr);
+                    gap: 40px;
+                }
+
+                .footer h3 {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    margin-bottom: 16px;
+                }
+
+                .footer p, .footer a {
+                    color: #64748b;
+                    text-decoration: none;
+                    line-height: 2.2;
+                    font-size: 0.9rem;
+                    display: block;
+                }
+
+                    .footer a:hover {
+                        color: #14b8a6;
+                    }
+
+                .copyright {
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e2e8f0;
+                    text-align: center;
+                    color: #94a3b8;
+                    font-size: 0.88rem;
+                }
+        </style>
+    </head>
+    <body>
+
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-stethoscope"></i></div>
+                VirtualDerm
+            </a>
+            <div class="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="#features">Features</a>
+                <a href="#how">How It Works</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="/Auth/Login" class="login-btn">Login</a>
+            </div>
+        </div>
+
+        <!-- HERO -->
+        <section class="hero">
+
+            <!-- LEFT -->
+            <div class="hero-text">
+                <div class="hero-badge">Modern Virtual Dermatology Platform</div>
+                <h1>Smarter <span>Skin Care</span><br>Starts Online</h1>
+                <p>VirtualDerm helps patients connect with dermatologists, schedule appointments, manage consultations, and receive AI-assisted skin health guidance in one secure platform.</p>
+                <div class="hero-buttons">
+                    <a href="/Auth/Register" class="primary-btn">Get Started →</a>
+                    <a href="#features" class="secondary-btn">Learn More</a>
+                </div>
+            </div>
+            <!-- RIGHT -->
+            <div class="hero-right" style="flex:1; position:relative; display:flex; justify-content:center; align-items:center; z-index:5;">
+
+                <!-- Doctor image -->
+                <img src="~/images/pexels-tima-miroshnichenko-8376192.jpg"
+                     alt="Doctor Consultation"
+                     style="position:relative; z-index:2; width:100%; max-width:580px; border-radius:32px; object-fit:cover; box-shadow:0 25px 60px rgba(15,23,42,0.12);" />
+
+            </div>
+
+        <!-- WAVE -->
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Teal layer — tallest, starts high on the left -->
+                <path fill="#2dd4bf" opacity="0.45"
+                      d="M0,80 C180,20 360,160 540,120 C720,80 900,0 1080,60 C1260,120 1360,80 1440,60 L1440,320 L0,320 Z" />
+                <!-- Lavender/purple layer — mid height -->
+                <path fill="#a78bfa" opacity="0.35"
+                      d="M0,140 C200,80 400,200 600,170 C800,140 1000,60 1200,110 C1320,140 1400,120 1440,110 L1440,320 L0,320 Z" />
+                <!-- White layer — lowest, cleans the bottom -->
+                <path fill="#ffffff"
+                      d="M0,210 C240,170 480,250 720,230 C960,210 1200,160 1440,190 L1440,320 L0,320 Z" />
+            </svg>
+        </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="features-section" id="features">
+            <div class="section-label">Features</div>
+            <div class="section-title">Everything You Need</div>
+            <div class="section-sub">VirtualDerm simplifies dermatology healthcare management through secure and modern digital solutions.</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon icon-teal"><i class="fa-regular fa-calendar-check"></i></div>
+                    <h3>Online Appointments</h3>
+                    <p>Easily schedule and manage appointments with dermatologists anytime, anywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-purple"><i class="fa-regular fa-file-lines"></i></div>
+                    <h3>Consultation Records</h3>
+                    <p>Securely store and access consultation details and prescriptions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue"><i class="fa-solid fa-robot"></i></div>
+                    <h3>AI Assistance</h3>
+                    <p>Get AI-powered guidance and support for skin health concerns anytime.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-orange"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Secure & Private</h3>
+                    <p>Your data is protected with advanced security and privacy controls.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="steps-section" id="how">
+            <div class="section-label">How It Works</div>
+            <div class="section-title">Simple & Efficient Process</div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Create Account</h3>
+                    <p>Register securely and create your personal healthcare profile.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Book Appointment</h3>
+                    <p>Schedule online consultations with licensed dermatologists.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Consult Online</h3>
+                    <p>Receive professional skincare guidance and AI assistance remotely.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Track Progress</h3>
+                    <p>Access your consultation history, prescriptions and follow-up records.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <h2>Ready to Modernize Your Skin Care?</h2>
+            <p>Join VirtualDerm and experience modern dermatology care today.</p>
+            <a href="/Auth/Register" class="cta-btn">Create Account →</a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-grid">
+                <div>
+                    <h3>Quick Links</h3>
+                    <a href="#">Home</a>
+                    <a href="#features">Features</a>
+                    <a href="#how">How It Works</a>
+                </div>
+                <div>
+                    <h3>Services</h3>   
+                    <p>Appointments</p>
+                    <p>Consultations</p>
+                    <p>AI Assistance</p>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <p>virtualderm@gmail.com</p>
+                    <p>+63 912 345 6789</p>
+                </div>
+            </div>
+            <div class="copyright">© 2026 VirtualDerm. All Rights Reserved.</div>
+        </footer>
+
+    </body>
+    </html>
