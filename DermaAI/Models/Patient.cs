@@ -21,6 +21,11 @@ namespace DermaAI.Models
         [Required, StringLength(20)]
         public string ContactNumber { get; set; }
 
+        public string? BloodType { get; set; }
+        public string? Allergies { get; set; }
+        public string? CurrentMedications { get; set; }
+        public string? MedicalHistory { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();

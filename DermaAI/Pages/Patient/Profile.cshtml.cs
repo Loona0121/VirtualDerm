@@ -37,6 +37,10 @@ namespace DermaAI.Pages.Patient
             public string Address { get; set; } = "";
             [Required]
             public string ContactNumber { get; set; } = "";
+            public string? BloodType { get; set; }
+            public string? Allergies { get; set; }
+            public string? CurrentMedications { get; set; }
+            public string? MedicalHistory { get; set; }
         }
 
         public async Task OnGetAsync()
@@ -56,6 +60,10 @@ namespace DermaAI.Pages.Patient
                 Input.Sex = patient.Sex;
                 Input.Address = patient.Address;
                 Input.ContactNumber = patient.ContactNumber;
+                Input.BloodType = patient.BloodType;
+                Input.Allergies = patient.Allergies;
+                Input.CurrentMedications = patient.CurrentMedications;
+                Input.MedicalHistory = patient.MedicalHistory;
             }
         }
 
@@ -76,7 +84,11 @@ namespace DermaAI.Pages.Patient
                     Age = Input.Age,
                     Sex = Input.Sex,
                     Address = Input.Address,
-                    ContactNumber = Input.ContactNumber
+                    ContactNumber = Input.ContactNumber,
+                    BloodType = Input.BloodType,
+                    Allergies = Input.Allergies,
+                    CurrentMedications = Input.CurrentMedications,
+                    MedicalHistory = Input.MedicalHistory
                 };
                 _context.Patients.Add(patient);
             }
@@ -87,6 +99,10 @@ namespace DermaAI.Pages.Patient
                 patient.Sex = Input.Sex;
                 patient.Address = Input.Address;
                 patient.ContactNumber = Input.ContactNumber;
+                patient.BloodType = Input.BloodType;
+                patient.Allergies = Input.Allergies;
+                patient.CurrentMedications = Input.CurrentMedications;
+                patient.MedicalHistory = Input.MedicalHistory;
             }
 
             await _context.SaveChangesAsync();

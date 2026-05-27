@@ -245,7 +245,11 @@
                     </div>
                     <div class="consult-body">
                         <div class="consult-item full">
-                            <label>Doctor Notes / Diagnosis</label>
+                            <label>Diagnosis</label>
+                            <p>@(c.Diagnosis ?? "None")</p>
+                        </div>
+                        <div class="consult-item full">
+                            <label>Doctor Notes</label>
                             <p>@c.DoctorNotes</p>
                         </div>
                         <div class="consult-item">

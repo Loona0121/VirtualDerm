@@ -13,6 +13,8 @@ namespace DermaAI.Models
         [Required]
         public string DoctorNotes { get; set; } = "";
 
+        public string? Diagnosis { get; set; }
+
         public string? Prescription { get; set; }
 
         public DateTime? FollowUpDate { get; set; }
