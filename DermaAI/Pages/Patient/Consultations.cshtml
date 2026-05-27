@@ -1,0 +1,261 @@
+﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DermaAI.Pages.Patient.ConsultationsModel
+@{
+    Layout = null;
+    ViewData["Title"] = "My Consultations";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Consultations - VirtualDerm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            body {
+                background: linear-gradient(160deg, #f0fdf9 0%, #e0f2fe 100%);
+                min-height: 100vh;
+            }
+
+            .navbar {
+                background: white;
+                padding: 16px 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+                font-weight: 800;
+                color: #0f172a;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .navbar-brand-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .navbar-links {
+                display: flex;
+                gap: 24px;
+                align-items: center;
+            }
+
+                .navbar-links a {
+                    text-decoration: none;
+                    color: #64748b;
+                    font-weight: 500;
+                    font-size: 0.9rem;
+                }
+
+                    .navbar-links a:hover, .navbar-links a.active {
+                        color: #14b8a6;
+                    }
+
+            .logout-btn {
+                background: #f1f5f9;
+                border: none;
+                padding: 8px 18px;
+                border-radius: 8px;
+                color: #0f172a;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 0.88rem;
+            }
+
+            .container {
+                max-width: 900px;
+                margin: 40px auto;
+                padding: 0 24px;
+            }
+
+            .page-header {
+                margin-bottom: 28px;
+            }
+
+                .page-header h1 {
+                    font-size: 1.8rem;
+                    font-weight: 800;
+                    color: #0f172a;
+                }
+
+                .page-header p {
+                    color: #64748b;
+                    margin-top: 6px;
+                }
+
+            .consultation-card {
+                background: white;
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+                margin-bottom: 16px;
+            }
+
+            .consult-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+                .consult-header h3 {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                }
+
+                .consult-header .date {
+                    color: #14b8a6;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                }
+
+            .consult-body {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .consult-item label {
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 6px;
+                display: block;
+            }
+
+            .consult-item p {
+                color: #0f172a;
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            .consult-item.full {
+                grid-column: 1 / -1;
+            }
+
+            .followup-badge {
+                background: #eff6ff;
+                color: #1e40af;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.78rem;
+                font-weight: 600;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 60px 20px;
+                color: #94a3b8;
+            }
+
+                .empty-state i {
+                    font-size: 3rem;
+                    margin-bottom: 16px;
+                    display: block;
+                }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="navbar-brand-icon"><i class="fa-solid fa-stethoscope"></i></div>
+            VirtualDerm
+        </div>
+        <div class="navbar-links">
+            <a href="/Patient/Dashboard">Dashboard</a>
+            <a href="/Patient/Appointments">Appointments</a>
+            <a href="/Patient/Consultations" class="active">Consultations</a>
+            <a href="/Patient/AIAssistant">AI Assistant</a>
+            <a href="/Patient/Profile">Profile</a>
+            <button type="button" class="logout-btn" onclick="document.getElementById('logoutModal').style.display='flex'">Logout</button>
+
+            <!-- Logout Modal -->
+            <div id="logoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+                <div style="background:white; border-radius:20px; padding:32px; max-width:400px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+                    <div style="width:60px; height:60px; background:#f0fdf9; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                        <i class="fa-solid fa-right-from-bracket" style="color:#14b8a6; font-size:1.5rem;"></i>
+                    </div>
+                    <h3 style="font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Logout</h3>
+                    <p style="color:#64748b; font-size:0.9rem; margin-bottom:24px;">Are you sure you want to logout from VirtualDerm?</p>
+                    <div style="display:flex; gap:12px;">
+                        <button onclick="document.getElementById('logoutModal').style.display='none'" style="flex:1; height:44px; border-radius:10px; border:1.5px solid #e2e8f0; background:white; font-weight:600; cursor:pointer; color:#64748b;">Cancel</button>
+                        <form method="post" asp-page="/Auth/Logout" style="flex:1; margin:0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" style="width:100%; height:44px; border-radius:10px; border:none; background:linear-gradient(135deg, #2dd4bf, #14b8a6); color:white; font-weight:700; cursor:pointer;">Yes, Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>My Consultations</h1>
+            <p>View your past consultation records, diagnoses, and prescriptions.</p>
+        </div>
+
+        @if (!Model.Consultations.Any())
+        {
+            <div class="empty-state">
+                <i class="fa-solid fa-file-medical"></i>
+                <p>No consultation records yet.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var c in Model.Consultations)
+            {
+                <div class="consultation-card">
+                    <div class="consult-header">
+                        <div>
+                            <h3><i class="fa-solid fa-user-doctor"></i> @c.Appointment?.DoctorName</h3>
+                            <div class="date"><i class="fa-solid fa-calendar"></i> @c.CreatedAt.ToString("MMMM dd, yyyy")</div>
+                        </div>
+                        @if (c.FollowUpDate.HasValue)
+                        {
+                            <span class="followup-badge"><i class="fa-solid fa-calendar-check"></i> Follow-up: @c.FollowUpDate.Value.ToString("MMM dd, yyyy")</span>
+                        }
+                    </div>
+                    <div class="consult-body">
+                        <div class="consult-item full">
+                            <label>Doctor Notes / Diagnosis</label>
+                            <p>@c.DoctorNotes</p>
+                        </div>
+                        <div class="consult-item">
+                            <label>Prescription</label>
+                            <p>@(c.Prescription ?? "None")</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>

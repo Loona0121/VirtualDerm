@@ -63,5 +63,11 @@ namespace DermaAI.Pages.Auth
             ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return Page();
         }
+
+        public async Task<IActionResult> OnPostLogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToPage("/Auth/Login");
+        }
     }
 }
