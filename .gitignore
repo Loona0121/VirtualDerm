@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 notepad .gitignore
+/DermaAI/appsettings.Development.json
