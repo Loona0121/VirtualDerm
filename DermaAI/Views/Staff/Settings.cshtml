@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Settings";
+    Layout = "~/Views/Shared/_StaffLayout.cshtml";
+}
+
+<style>
+    .settings-card {
+        background:white; border-radius:24px; padding:36px;
+        border:1px solid #edf2f7; box-shadow:0 10px 30px rgba(0,0,0,0.04);
+        max-width:600px; margin-bottom:24px;
+    }
+    .settings-card h5 { font-size:1.1rem; font-weight:700; margin-bottom:24px; color:#0f172a; }
+    .form-label { font-weight:600; color:#0f172a; font-size:0.88rem; margin-bottom:6px; display:block; }
+    .form-group-s { margin-bottom:16px; }
+    .input-wrap { position:relative; }
+    .input-wrap i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#94a3b8; }
+    .form-control-custom {
+        height:48px; border-radius:12px; border:1.5px solid #e2e8f0;
+        padding:0 16px 0 42px; font-size:0.92rem; background:#f8fafc; width:100%; transition:0.2s;
+    }
+    .form-control-custom:focus {
+        border-color:#14b8a6; box-shadow:0 0 0 3px rgba(20,184,166,0.12);
+        outline:none; background:white;
+    }
+    .save-btn {
+        background:linear-gradient(135deg,#2dd4bf,#14b8a6);
+        color:white; border:none; border-radius:12px;
+        padding:12px 28px; font-weight:700; cursor:pointer; transition:0.2s;
+    }
+    .save-btn:hover { transform:translateY(-2px); }
+</style>
+
+<div style="margin-bottom:28px;">
+    <h2 style="font-size:2.1rem; font-weight:700; color:#0f172a; margin-bottom:5px;">Settings</h2>
+    <p style="color:#94a3b8; margin:0;">Manage your account settings</p>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:14px 20px; border-radius:14px; margin-bottom:20px; font-weight:600;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div style="background:#fee2e2; color:#dc2626; padding:14px 20px; border-radius:14px; margin-bottom:20px; font-weight:600;">
+        <i class="fa-solid fa-circle-xmark"></i> @TempData["Error"]
+    </div>
+}
+
+<div class="settings-card">
+    <h5><i class="fa-solid fa-lock" style="color:#14b8a6;"></i> Change Password</h5>
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-group-s">
+            <label class="form-label">Current Password</label>
+            <div class="input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="CurrentPassword" class="form-control-custom" placeholder="Enter current password" />
+            </div>
+        </div>
+        <div class="form-group-s">
+            <label class="form-label">New Password</label>
+            <div class="input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="NewPassword" class="form-control-custom" placeholder="Enter new password" />
+            </div>
+        </div>
+        <div class="form-group-s">
+            <label class="form-label">Confirm New Password</label>
+            <div class="input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="ConfirmPassword" class="form-control-custom" placeholder="Confirm new password" />
+            </div>
+        </div>
+        <button type="submit" class="save-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Update Password
+        </button>
+    </form>
+</div>

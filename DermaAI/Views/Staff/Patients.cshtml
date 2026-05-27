@@ -1,0 +1,133 @@
+﻿@model List<DermaAI.Models.Patient>
+@{
+    ViewData["Title"] = "Patients";
+    Layout = "~/Views/Shared/_StaffLayout.cshtml";
+}
+
+<style>
+    .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+    .page-header h2 { font-size:2.1rem; font-weight:700; color:#0f172a; margin-bottom:5px; }
+    .page-header p { color:#94a3b8; margin:0; }
+    .patient-avatar {
+        width:40px; height:40px; border-radius:50%;
+        background:linear-gradient(135deg,#2dd4bf,#60a5fa);
+        color:white; display:inline-flex; align-items:center;
+        justify-content:center; font-weight:700; font-size:0.95rem; flex-shrink:0;
+    }
+    .action-btn { padding:6px 14px; border-radius:8px; border:none; font-size:0.8rem; font-weight:600; cursor:pointer; transition:0.2s; text-decoration:none; display:inline-block; }
+    .btn-view { background:#e0f2fe; color:#0ea5e9; }
+    .btn-view:hover { background:#0ea5e9; color:white; }
+    .empty-state { color:#94a3b8; text-align:center; padding:40px 0; font-size:0.88rem; }
+    .filter-bar {
+        background:white; border-radius:18px; padding:20px 24px;
+        border:1px solid #edf2f7; margin-bottom:20px;
+        display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap;
+    }
+    .filter-group { display:flex; flex-direction:column; gap:6px; }
+    .filter-label { font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; }
+    .filter-input {
+        height:42px; border-radius:10px; border:1.5px solid #e2e8f0;
+        padding:0 14px; font-size:0.88rem; background:#f8fafc; outline:none; transition:0.2s;
+    }
+    .filter-input:focus { border-color:#14b8a6; background:white; }
+    .clear-btn {
+        height:42px; padding:0 16px; border-radius:10px; border:1.5px solid #e2e8f0;
+        background:white; color:#64748b; font-weight:600; font-size:0.88rem; cursor:pointer;
+    }
+    .result-count { color:#64748b; font-size:0.88rem; margin-bottom:14px; }
+</style>
+
+<div class="page-header">
+    <div>
+        <h2>Patients</h2>
+        <p>View all registered patients</p>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <div class="filter-group">
+        <div class="filter-label">Search</div>
+        <input type="text" id="searchInput" class="filter-input" placeholder="Patient name..." style="width:220px;" oninput="filterTable()" />
+    </div>
+    <div class="filter-group">
+        <div class="filter-label">Sex</div>
+        <select id="sexFilter" class="filter-input" style="width:140px;" onchange="filterTable()">
+            <option value="">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </div>
+    <button class="clear-btn" onclick="clearFilters()">Clear</button>
+</div>
+
+<div class="result-count" id="resultCount">@Model.Count patient(s) found</div>
+
+<div class="table-modern">
+    <table class="table" id="patientsTable">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Age</th>
+                <th>Sex</th>
+                <th>Contact</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div class="patient-avatar">
+                                    @(p.FullName?.Substring(0, 1).ToUpper() ?? "P")
+                                </div>
+                                <strong>@p.FullName</strong>
+                            </div>
+                        </td>
+                        <td>@p.Age</td>
+                        <td>@p.Sex</td>
+                        <td>@p.ContactNumber</td>
+                        <td>@p.Address</td>
+                        <td>
+                            <a href="/Staff/PatientDetails/@p.Id" class="action-btn btn-view">
+                                <i class="fa-solid fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6"><div class="empty-state">No patients found.</div></td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script>
+    function filterTable() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const sex = document.getElementById('sexFilter').value.toLowerCase();
+        const rows = document.querySelectorAll('#patientsTable tbody tr');
+        let count = 0;
+        rows.forEach(row => {
+            const name = row.cells[0]?.textContent.toLowerCase() ?? '';
+            const rowSex = row.cells[2]?.textContent.toLowerCase() ?? '';
+            const match = name.includes(search) && (sex === '' || rowSex === sex);
+            row.style.display = match ? '' : 'none';
+            if (match) count++;
+        });
+        document.getElementById('resultCount').textContent = count + ' patient(s) found';
+    }
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('sexFilter').value = '';
+        filterTable();
+    }
+</script>
+}

@@ -1,6 +1,6 @@
 ﻿@page
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers    
 @model DermaAI.Pages.Auth.RegisterModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = null;
@@ -61,7 +61,7 @@
             .image-overlay {
                 position: absolute;
                 inset: 0;
-                background: linear-gradient( to bottom, rgba(20, 184, 166, 0.25), rgba(15, 23, 42, 0.45) );
+                background: linear-gradient(to bottom, rgba(20,184,166,0.25), rgba(15,23,42,0.45));
             }
 
             .image-logo {
@@ -111,7 +111,7 @@
                 .image-text p {
                     font-size: 0.9rem;
                     line-height: 1.7;
-                    color: rgba(255, 255, 255, 0.88);
+                    color: rgba(255,255,255,0.88);
                 }
 
             .image-badges {
@@ -125,7 +125,7 @@
             }
 
             .img-badge {
-                background: rgba(255, 255, 255, 0.18);
+                background: rgba(255,255,255,0.18);
                 backdrop-filter: blur(8px);
                 border: 1px solid rgba(255,255,255,0.3);
                 border-radius: 999px;
@@ -216,7 +216,7 @@
                 position: relative;
             }
 
-                .input-box i {
+                .input-box i.field-icon {
                     position: absolute;
                     left: 14px;
                     top: 50%;
@@ -225,12 +225,27 @@
                     font-size: 0.88rem;
                 }
 
+                .input-box .toggle-eye {
+                    position: absolute;
+                    right: 14px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #94a3b8;
+                    font-size: 0.88rem;
+                    cursor: pointer;
+                    z-index: 2;
+                }
+
+                    .input-box .toggle-eye:hover {
+                        color: #14b8a6;
+                    }
+
             .form-control {
                 width: 100%;
                 height: 46px;
                 border-radius: 12px;
                 border: 1.5px solid #e2e8f0;
-                padding: 0 42px 0 42px;
+                padding: 0 42px;
                 font-size: 0.9rem;
                 background: #f8fafc;
                 transition: 0.2s;
@@ -239,7 +254,7 @@
 
                 .form-control:focus {
                     border-color: #14b8a6;
-                    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+                    box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
                     outline: none;
                     background: white;
                 }
@@ -254,18 +269,6 @@
                 gap: 12px;
             }
 
-            .input-box .toggle-eye {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 0.88rem;
-                z-index: 2;
-            }
-
-                .input-box .toggle-eye:hover {
-                    color: #14b8a6 !important;
-                }
-
             .register-btn {
                 width: 100%;
                 height: 48px;
@@ -278,12 +281,12 @@
                 margin-top: 6px;
                 cursor: pointer;
                 transition: 0.25s;
-                box-shadow: 0 6px 20px rgba(45, 212, 191, 0.25);
+                box-shadow: 0 6px 20px rgba(45,212,191,0.25);
             }
 
                 .register-btn:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 10px 28px rgba(20, 184, 166, 0.3);
+                    box-shadow: 0 10px 28px rgba(20,184,166,0.3);
                 }
 
             .divider {
@@ -295,8 +298,7 @@
                 font-size: 0.82rem;
             }
 
-                .divider::before,
-                .divider::after {
+                .divider::before, .divider::after {
                     content: "";
                     flex: 1;
                     height: 1px;
@@ -354,6 +356,54 @@
                 display: block;
             }
 
+            /* Role cards */
+            .role-cards {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+
+            .role-card {
+                border: 1.5px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 14px;
+                cursor: pointer;
+                transition: 0.2s;
+                text-align: center;
+                background: #f8fafc;
+            }
+
+                .role-card:hover {
+                    border-color: #14b8a6;
+                    background: rgba(20,184,166,0.05);
+                }
+
+                .role-card.selected {
+                    border-color: #14b8a6;
+                    background: rgba(20,184,166,0.08);
+                    box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
+                }
+
+                .role-card i {
+                    font-size: 1.5rem;
+                    color: #14b8a6;
+                    margin-bottom: 6px;
+                    display: block;
+                }
+
+                .role-card .role-name {
+                    font-weight: 700;
+                    font-size: 0.88rem;
+                    color: #0f172a;
+                }
+
+                .role-card .role-desc {
+                    font-size: 0.75rem;
+                    color: #94a3b8;
+                    margin-top: 2px;
+                }
+
             @@media (max-width: 1000px) {
                 body {
                     overflow-y: auto;
@@ -400,7 +450,7 @@
 
         <!-- LEFT IMAGE -->
         <div class="register-image">
-            <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=1400&auto=format&fit=crop"
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1400&auto=format&fit=crop"
                  alt="VirtualDerm" />
             <div class="image-overlay"></div>
             <div class="image-text">
@@ -410,6 +460,13 @@
         </div>
 
         <!-- RIGHT FORM -->
+        @if (TempData["Debug"] != null)
+        {
+            <div style="background:red; color:white; padding:10px; border-radius:8px; margin-bottom:10px; font-size:0.8rem;">
+                @TempData["Debug"]
+            </div>
+        }
+
         <div class="register-form-section">
             <div class="form-wrapper">
 
@@ -425,14 +482,14 @@
                 </div>
 
                 <form method="post">
-
+                    @Html.AntiForgeryToken()
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <!-- FULL NAME -->
                     <div class="form-group">
                         <label asp-for="Input.FullName">Full Name</label>
                         <div class="input-box">
-                            <i class="fa-regular fa-user"></i>
+                            <i class="fa-regular fa-user field-icon"></i>
                             <input asp-for="Input.FullName" class="form-control" placeholder="Enter your full name" />
                         </div>
                         <span asp-validation-for="Input.FullName" class="text-danger"></span>
@@ -442,7 +499,7 @@
                     <div class="form-group">
                         <label asp-for="Input.Email">Email Address</label>
                         <div class="input-box">
-                            <i class="fa-regular fa-envelope"></i>
+                            <i class="fa-regular fa-envelope field-icon"></i>
                             <input asp-for="Input.Email" class="form-control" placeholder="Enter your email address" />
                         </div>
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
@@ -453,9 +510,9 @@
                         <div class="form-group">
                             <label asp-for="Input.Password">Password</label>
                             <div class="input-box">
-                                <i class="fa-solid fa-lock"></i>
+                                <i class="fa-solid fa-lock field-icon"></i>
                                 <input asp-for="Input.Password" class="form-control" id="password" type="password" placeholder="Create a password" />
-                                <i class="fa-regular fa-eye toggle-eye" onclick="togglePassword('password', this)" style="left:unset; right:14px; cursor:pointer; color:#94a3b8;"></i>
+                                <i class="fa-regular fa-eye toggle-eye" onclick="togglePassword('password', this)"></i>
                             </div>
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
@@ -463,27 +520,31 @@
                         <div class="form-group">
                             <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                             <div class="input-box">
-                                <i class="fa-solid fa-lock"></i>
+                                <i class="fa-solid fa-lock field-icon"></i>
                                 <input asp-for="Input.ConfirmPassword" class="form-control" id="confirmPassword" type="password" placeholder="Confirm password" />
-                                <i class="fa-regular fa-eye toggle-eye" onclick="togglePassword('confirmPassword', this)" style="left:unset; right:14px; cursor:pointer; color:#94a3b8;"></i>
+                                <i class="fa-regular fa-eye toggle-eye" onclick="togglePassword('confirmPassword', this)"></i>
                             </div>
                             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- ROLE -->
+                    <!-- ROLE SELECTION -->
                     <div class="form-group">
-                        <label asp-for="Input.RoleName">Account Role</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-user-tag"></i>
-                            <select asp-for="Input.RoleName" class="form-control">
-                                <option value="">Select account role</option>
-                                <option>Patient</option>
-                                <option>Staff</option>
-                                <option>Admin</option>
-                            </select>
+                        <label>I am a...</label>
+                        <div class="role-cards">
+                            <div class="role-card" id="card-patient" onclick="selectRole('Patient')">
+                                <i class="fa-regular fa-user"></i>
+                                <div class="role-name">Patient</div>
+                                <div class="role-desc">Book appointments & consult online</div>
+                            </div>
+                            <div class="role-card" id="card-dermatologist" onclick="selectRole('Dermatologist')">
+                                <i class="fa-solid fa-stethoscope"></i>
+                                <div class="role-name">Dermatologist</div>
+                                <div class="role-desc">Manage patients & consultations</div>
+                            </div>
                         </div>
-                        <span asp-validation-for="Input.RoleName" class="text-danger"></span>
+                        <input type="hidden" asp-for="Input.Role" id="roleInput" />
+                        <span asp-validation-for="Input.Role" class="text-danger"></span>
                     </div>
 
                     <!-- SUBMIT -->
@@ -507,9 +568,14 @@
 
     </div>
 
-    <partial name="_ValidationScriptsPartial" />
-
     <script>
+            function selectRole(role) {
+                document.getElementById('roleInput').value = role;
+                document.getElementById('card-patient').classList.remove('selected');
+                document.getElementById('card-dermatologist').classList.remove('selected');
+                document.getElementById('card-' + role.toLowerCase()).classList.add('selected');
+            }
+
             function togglePassword(fieldId, icon) {
                 const input = document.getElementById(fieldId);
                 if (input.type === 'password') {
@@ -524,5 +590,7 @@
             }
     </script>
 
+    <partial name="_ValidationScriptsPartial" />
+
 </body>
-</html> 
+</html>

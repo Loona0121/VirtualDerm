@@ -1,3 +1,4 @@
+
 using DermaAI.Data;
 using DermaAI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,11 +13,15 @@ namespace DermaAI.Pages.Patient
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
 
-        public AppointmentsModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public AppointmentsModel(
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _context = context;
         }
+
+        public string PatientName { get; set; } = "Patient";
 
         public List<Appointment> UpcomingAppointments { get; set; } = new();
         public List<Appointment> PastAppointments { get; set; } = new();
@@ -24,6 +29,12 @@ namespace DermaAI.Pages.Patient
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                PatientName = user.FullName;
+            }
+
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.FullName == user!.FullName);
 
@@ -32,12 +43,14 @@ namespace DermaAI.Pages.Patient
                 var today = DateTime.Today;
 
                 UpcomingAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id && a.ScheduledDate >= today)
+                    .Where(a => a.PatientId == patient.Id &&
+                                a.ScheduledDate >= today)
                     .OrderBy(a => a.ScheduledDate)
                     .ToListAsync();
 
                 PastAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id && a.ScheduledDate < today)
+                    .Where(a => a.PatientId == patient.Id &&
+                                a.ScheduledDate < today)
                     .OrderByDescending(a => a.ScheduledDate)
                     .ToListAsync();
             }
@@ -45,14 +58,21 @@ namespace DermaAI.Pages.Patient
 
         public async Task<IActionResult> OnPostCancelAsync(int appointmentId)
         {
-            var appointment = await _context.Appointments.FindAsync(appointmentId);
+            var appointment = await _context.Appointments
+                .FindAsync(appointmentId);
+
             if (appointment != null)
             {
                 appointment.Status = "Cancelled";
+
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Appointment cancelled successfully.";
+
+                TempData["Success"] =
+                    "Appointment cancelled successfully.";
             }
+
             return RedirectToPage();
         }
     }
 }
+

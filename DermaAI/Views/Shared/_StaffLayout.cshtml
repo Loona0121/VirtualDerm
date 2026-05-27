@@ -1,0 +1,316 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using DermaAI.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VirtualDerm</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background: #f6fbfa;
+                color: #0f172a;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 270px;
+                height: 100vh;
+                background: white;
+                border-right: 1px solid #edf2f7;
+                padding: 24px 18px;
+                display: flex;
+                flex-direction: column;
+                z-index: 1000;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+                .sidebar::-webkit-scrollbar {
+                    width: 6px;
+                }
+
+                .sidebar::-webkit-scrollbar-thumb {
+                    background: #d1d5db;
+                    border-radius: 10px;
+                }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 40px;
+            }
+
+            .brand-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 18px;
+                background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+            }
+
+            .brand h3 {
+                font-size: 1.7rem;
+                font-weight: 700;
+                margin: 0;
+                color: #14b8a6;
+            }
+
+            .nav-title {
+                color: #94a3b8;
+                font-size: 0.78rem;
+                font-weight: 700;
+                margin: 22px 14px 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 14px 18px;
+                text-decoration: none;
+                color: #475569;
+                border-radius: 18px;
+                margin-bottom: 8px;
+                transition: 0.2s;
+                font-weight: 500;
+            }
+
+                .sidebar a:hover,
+                .sidebar a.active {
+                    background: linear-gradient(135deg, #20c7b6, #5dd9cb);
+                    color: white;
+                    box-shadow: 0 10px 25px rgba(32,199,182,0.25);
+                }
+
+            .sidebar i {
+                width: 18px;
+            }
+
+            .logout-btn {
+                margin-top: auto;
+                background: #f8fafc;
+            }
+
+                .logout-btn:hover {
+                    background: linear-gradient(135deg, #20c7b6, #5dd9cb) !important;
+                    color: white !important;
+                    box-shadow: 0 10px 25px rgba(32,199,182,0.25);
+                }
+
+            .main-content {
+                margin-left: 270px;
+                min-height: 100vh;
+            }
+
+            .topbar {
+                background: white;
+                border-bottom: 1px solid #edf2f7;
+                padding: 12px 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .topbar-right {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+            }
+
+            .profile-box {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 7px 12px;
+                border: 1px solid #edf2f7;
+                border-radius: 18px;
+                background: white;
+                cursor: pointer;
+            }
+
+            .profile-avatar {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #20c7b6, #7ce3d8);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+            .profile-name {
+                font-weight: 700;
+                font-size: 1rem;
+            }
+
+            .profile-role {
+                color: #94a3b8;
+                font-size: 0.82rem;
+            }
+
+            .page-content {
+                padding: 32px;
+            }
+
+            .table-modern {
+                background: #ffffff;
+                border-radius: 22px;
+                overflow: hidden;
+                border: 1px solid #edf2f7;
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+            }
+
+                .table-modern table {
+                    margin-bottom: 0;
+                }
+
+                .table-modern thead {
+                    background: #f8fafc;
+                }
+
+                .table-modern th {
+                    padding: 18px 20px;
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    border: none;
+                }
+
+                .table-modern td {
+                    padding: 18px 20px;
+                    border-top: 1px solid #f1f5f9;
+                    color: #475569;
+                    vertical-align: middle;
+                }
+
+                .table-modern tr:hover {
+                    background: #f8fffe;
+                }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-stethoscope"></i>
+            </div>
+            <div>
+                <h3>VirtualDerm</h3>
+            </div>
+        </div>
+
+        <div class="nav-title">Main</div>
+
+        <a href="/Staff/Dashboard" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Staff" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+            <i class="fa-solid fa-table-columns"></i>
+            Dashboard
+        </a>
+
+        <div class="nav-title">Management</div>
+
+        <a href="/Staff/Appointments" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Appointments" ? "active" : "")">
+            <i class="fa-regular fa-calendar"></i>
+            Appointments
+        </a>
+
+        <a href="/Staff/Consultations" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Consultations" ? "active" : "")">
+            <i class="fa-regular fa-clipboard"></i>
+            Consultations
+        </a>
+
+        <a href="/Staff/Patients" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Patients" ? "active" : "")">
+            <i class="fa-regular fa-user"></i>
+            Patients
+        </a>
+
+        <a href="/Staff/AIAssistant" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "AIAssistant" ? "active" : "")">
+            <i class="fa-solid fa-robot"></i>
+            AI Assistant
+        </a>
+
+        <div class="nav-title">Account</div>
+
+        <a href="/Staff/Profile" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+            <i class="fa-regular fa-user"></i>
+            Profile
+        </a>
+
+        <a href="/Staff/Settings" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+        <form method="post" action="/Auth/Logout" style="margin-top:auto;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="logout-btn"
+                    style="width:100%; border:none; background:#f8fafc; display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:18px; color:#475569; font-weight:500; cursor:pointer; font-family:'Segoe UI',sans-serif; font-size:1rem;">
+                <i class="fa-solid fa-right-from-bracket" style="width:18px;"></i>
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <div class="topbar">
+            <div></div>
+            <div class="topbar-right">
+                <a href="/Staff/Profile" style="text-decoration:none; color:inherit;">
+                    <div class="profile-box">
+                        <div class="profile-avatar">
+                            @(currentUser?.FullName?.Substring(0, 1).ToUpper() ?? "S")
+                        </div>
+                        <div>
+                            <div class="profile-name">@(currentUser?.FullName ?? "Staff")</div>
+                            <div class="profile-role">Staff</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="page-content">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

@@ -28,11 +28,11 @@ namespace DermaAI.Pages.Auth
             public string FullName { get; set; } = "";
 
             [Required]
-            public string RoleName { get; set; } = "";
-
-            [Required]
             [EmailAddress]
             public string Email { get; set; } = "";
+
+            [Required]
+            public string Role { get; set; } = ""; // Dermatologist or Patient
 
             [Required]
             [DataType(DataType.Password)]
@@ -44,42 +44,67 @@ namespace DermaAI.Pages.Auth
             public string ConfirmPassword { get; set; } = "";
         }
 
-        public void OnGet()
-        {
-        }
+        public void OnGet() { }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // 1. Validate role selection
+            if (string.IsNullOrWhiteSpace(Input.Role))
+            {
+                ModelState.AddModelError("Input.Role", "Please select a role.");
+                return Page();
+            }
+
+            // 2. Validate form
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
+            // 3. Use EXACT role name from DB
+            var assignedRole = Input.Role;
+
+            // 4. Create user
             var user = new ApplicationUser
             {
                 UserName = Input.Email,
                 Email = Input.Email,
                 FullName = Input.FullName,
-                RoleName = Input.RoleName
+                RoleName = assignedRole
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                // Add this line before SignIn
-                await _userManager.AddToRoleAsync(user, Input.RoleName);
-
-                await _signInManager.SignInAsync(user, false);
-                return RedirectToPage("/Index");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return Page();
             }
 
-            foreach (var error in result.Errors)
+            // 5. Assign role (THIS IS WHAT FIXES YOUR DROPDOWN ISSUE)
+            var roleResult = await _userManager.AddToRoleAsync(user, assignedRole);
+
+            if (!roleResult.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                foreach (var error in roleResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                // optional cleanup if role fails
+                await _userManager.DeleteAsync(user);
+
+                return Page();
             }
 
-            return Page();
+            // 6. Auto login
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            // 7. Redirect safely
+            return RedirectToPage("/Index");
         }
     }
 }

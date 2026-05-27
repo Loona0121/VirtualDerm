@@ -438,7 +438,8 @@
                         <label asp-for="Input.Email">Email Address</label>
                         <div class="input-box">
                             <i class="fa-regular fa-envelope field-icon"></i>
-                            <input asp-for="Input.Email" class="form-control" placeholder="Enter your email address" />
+                            <input asp-for="Input.Email" class="form-control"
+                                   placeholder="Enter your email address" />
                         </div>
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
@@ -448,27 +449,43 @@
                         <label asp-for="Input.Password">Password</label>
                         <div class="input-box">
                             <i class="fa-solid fa-lock field-icon"></i>
-                            <input asp-for="Input.Password" class="form-control" id="loginPassword" type="password" placeholder="Enter your password" />
-                            <i class="fa-regular fa-eye toggle-eye" onclick="togglePassword('loginPassword', this)"></i>
+                            <input asp-for="Input.Password"
+                                   class="form-control"
+                                   id="loginPassword"
+                                   type="password"
+                                   placeholder="Enter your password" />
+                            <i class="fa-regular fa-eye toggle-eye"
+                               onclick="togglePassword('loginPassword', this)"></i>
                         </div>
+
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
+
                         <div class="forgot-link">
-                            <a href="#">Forgot password?</a>
+                            <a href="/Auth/ForgotPassword">Forgot password?</a>
                         </div>
                     </div>
 
-                    <!-- SUBMIT -->
+                    <!-- LOGIN BUTTON -->
                     <button type="submit" class="login-btn">Login</button>
-
-                    <div class="divider">OR</div>
-
-                    <button type="button" class="google-btn">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" />
-                        Continue with Google
-                    </button>
 
                 </form>
 
+                <div class="divider">OR</div>
+                <!-- GOOGLE LOGIN -->
+                <form method="post" asp-page-handler="ExternalLogin">
+
+    @Html.AntiForgeryToken()
+
+    <button type="submit"
+            class="google-btn"
+            name="provider"
+            value="Google">
+
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" />
+        Continue with Google
+    </button>
+</form>
+                  
                 <div class="bottom-link">
                     Don't have an account? <a href="/Auth/Register">Sign Up</a>
                 </div>

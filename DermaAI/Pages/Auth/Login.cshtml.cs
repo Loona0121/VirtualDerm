@@ -41,23 +41,39 @@ namespace DermaAI.Pages.Auth
                 return Page();
 
             var result = await _signInManager.PasswordSignInAsync(
-                Input.Email, Input.Password,
+                Input.Email,
+                Input.Password,
                 isPersistent: false,
                 lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                var roles = await _userManager.GetRolesAsync(user!);
-                var role = roles.FirstOrDefault();
 
-                return role switch
+                if (user == null)
                 {
-                    "Admin" => RedirectToPage("/Admin/Dashboard"),
-                    "Staff" => RedirectToPage("/Staff/Dashboard"),
-                    "Patient" => RedirectToPage("/Patient/Dashboard"),
-                    _ => RedirectToPage("/Index")
-                };
+                    ModelState.AddModelError(string.Empty, "User not found.");
+                    return Page();
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+
+                if (roles.Contains("Admin"))
+                {
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+
+                if (roles.Contains("Staff"))
+                {
+                    return RedirectToAction("Dashboard", "Staff");
+                }
+
+                if (roles.Contains("Patient"))
+                {
+                    return RedirectToAction("Dashboard", "Patient");
+                }
+
+                return RedirectToAction("Landing", "Home");
             }
 
             ModelState.AddModelError(string.Empty, "Invalid email or password.");

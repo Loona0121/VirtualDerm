@@ -1,0 +1,328 @@
+﻿@model List<DermaAI.Models.Appointment>
+@{
+    ViewData["Title"] = "Appointments";
+    Layout = "~/Views/Shared/_StaffLayout.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+        .page-header h2 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+    .status {
+        padding: 5px 14px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .confirmed {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .cancelled {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .done {
+        background: #e0f2fe;
+        color: #0ea5e9;
+    }
+
+    .action-btn {
+        padding: 5px 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-confirm {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+        .btn-confirm:hover {
+            background: #16a34a;
+            color: white;
+        }
+
+    .btn-cancel {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+        .btn-cancel:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+    .patient-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#2dd4bf,#60a5fa);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .empty-state {
+        color: #94a3b8;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 0.88rem;
+    }
+
+    .filter-bar {
+        background: white;
+        border-radius: 18px;
+        padding: 20px 24px;
+        border: 1px solid #edf2f7;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .filter-input {
+        height: 42px;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        padding: 0 14px;
+        font-size: 0.88rem;
+        background: #f8fafc;
+        outline: none;
+        transition: 0.2s;
+    }
+
+        .filter-input:focus {
+            border-color: #14b8a6;
+            background: white;
+        }
+
+    .clear-btn {
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+
+    .result-count {
+        color: #64748b;
+        font-size: 0.88rem;
+        margin-bottom: 14px;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 14px 20px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .count-badge {
+        background: rgba(20,184,166,0.12);
+        color: #14b8a6;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h2>Appointments</h2>
+        <p>Manage and update patient appointments</p>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:14px 20px; border-radius:14px; margin-bottom:20px; font-weight:600;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="filter-bar">
+    <div class="filter-group">
+        <div class="filter-label">Search</div>
+        <input type="text" id="searchInput" class="filter-input" placeholder="Patient or doctor name..." style="width:220px;" oninput="filterTable()" />
+    </div>
+    <div class="filter-group">
+        <div class="filter-label">Status</div>
+        <select id="statusFilter" class="filter-input" style="width:150px;" onchange="filterTable()">
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Done">Done</option>
+        </select>
+    </div>
+    <button class="clear-btn" onclick="clearFilters()">Clear</button>
+</div>
+
+<div class="result-count" id="resultCount">@Model.Count appointment(s) found</div>
+
+<div class="table-modern">
+    <div class="section-label">
+        All Appointments <span class="count-badge">@Model.Count</span>
+    </div>
+    <table class="table" id="appointmentsTable">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="patient-avatar">
+                                    @(a.Patient?.FullName?.Substring(0, 1).ToUpper() ?? "P")
+                                </div>
+                                <strong>@a.Patient?.FullName</strong>
+                            </div>
+                        </td>
+                        <td>@a.DoctorName</td>
+                        <td>@a.ScheduledDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                        <td><span class="status @a.Status?.ToLower()">@a.Status</span></td>
+                        <td>@(a.Notes ?? "—")</td>
+                        <td>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                @if (a.Status != "Confirmed" && a.Status != "Cancelled" && a.Status != "Done")
+                                {
+                                    <form method="post" action="/Staff/UpdateAppointmentStatus" style="margin:0;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="appointmentId" value="@a.Id" />
+                                        <input type="hidden" name="status" value="Confirmed" />
+                                        <button type="submit" class="action-btn btn-confirm">
+                                            <i class="fa-solid fa-check"></i> Confirm
+                                        </button>
+                                    </form>
+                                }
+                                @if (a.Status != "Cancelled" && a.Status != "Done")
+                                {
+                                    <form method="post" action="/Staff/UpdateAppointmentStatus" style="margin:0;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="appointmentId" value="@a.Id" />
+                                        <input type="hidden" name="status" value="Cancelled" />
+                                        <button type="submit" class="action-btn btn-cancel"
+                                                onclick="return confirm('Cancel this appointment?')">
+                                            <i class="fa-solid fa-xmark"></i> Cancel
+                                        </button>
+                                    </form>
+                                }
+                                @if (a.Status == "Cancelled" || a.Status == "Done")
+                                {
+                                    <span style="color:#94a3b8; font-size:0.78rem; font-style:italic;">No actions</span>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6"><div class="empty-state">No appointments found.</div></td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value.toLowerCase();
+            const rows = document.querySelectorAll('#appointmentsTable tbody tr');
+            let count = 0;
+
+            rows.forEach(row => {
+                const name = row.cells[0]?.textContent.toLowerCase() ?? '';
+                const doctor = row.cells[1]?.textContent.toLowerCase() ?? '';
+                const rowStatus = row.cells[3]?.textContent.trim().toLowerCase() ?? '';
+                const matchSearch = name.includes(search) || doctor.includes(search);
+                const matchStatus = status === '' || rowStatus === status;
+                const match = matchSearch && matchStatus;
+                row.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+
+            document.getElementById('resultCount').textContent = count + ' appointment(s) found';
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            filterTable();
+        }
+    </script>
+}

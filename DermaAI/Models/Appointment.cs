@@ -9,11 +9,7 @@ namespace DermaAI.Models
         [Required]
         public int PatientId { get; set; }
         public Patient Patient { get; set; }
-
-        [Required]
-        public string DoctorName { get; set; }
-
-        [Required]
+        public string DoctorId { get; set; }
         public DateTime ScheduledDate { get; set; }
 
         public string Status { get; set; } = "Pending";

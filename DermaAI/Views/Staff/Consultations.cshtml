@@ -1,0 +1,464 @@
+﻿@model List<DermaAI.Models.Consultation>
+@{
+    ViewData["Title"] = "Consultations";
+    Layout = "~/Views/Shared/_StaffLayout.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+        .page-header h2 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+    .add-btn {
+        background: linear-gradient(135deg,#20c7b6,#5dd9cb);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 12px 22px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.92rem;
+    }
+
+    .action-btn {
+        padding: 5px 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-view {
+        background: #e0f2fe;
+        color: #0ea5e9;
+    }
+
+        .btn-view:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+    .patient-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#2dd4bf,#60a5fa);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .prescription-tag {
+        background: rgba(249,115,22,0.08);
+        color: #ea580c;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .empty-state {
+        color: #94a3b8;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 0.88rem;
+    }
+
+    .filter-bar {
+        background: white;
+        border-radius: 18px;
+        padding: 20px 24px;
+        border: 1px solid #edf2f7;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .filter-input {
+        height: 42px;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        padding: 0 14px;
+        font-size: 0.88rem;
+        background: #f8fafc;
+        outline: none;
+        transition: 0.2s;
+    }
+
+        .filter-input:focus {
+            border-color: #14b8a6;
+            background: white;
+        }
+
+    .clear-btn {
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+    }
+
+    .result-count {
+        color: #64748b;
+        font-size: 0.88rem;
+        margin-bottom: 14px;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 14px 20px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .count-badge {
+        background: rgba(20,184,166,0.12);
+        color: #14b8a6;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.5);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+    .modal-box {
+        background: white;
+        border-radius: 24px;
+        padding: 36px;
+        width: 100%;
+        max-width: 560px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 60px rgba(15,23,42,0.2);
+        position: relative;
+        animation: modalIn 0.2s ease;
+    }
+
+    @@keyframes modalIn {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: none;
+        background: #f1f5f9;
+        color: #64748b;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+        .modal-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .modal-subtitle {
+        color: #94a3b8;
+        font-size: 0.82rem;
+        margin-bottom: 22px;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .detail-row {
+        margin-bottom: 14px;
+    }
+
+    .detail-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.88rem;
+        color: #0f172a;
+        line-height: 1.6;
+        border: 1px solid #edf2f7;
+    }
+
+    .diagnosis-badge {
+        background: rgba(20,184,166,0.1);
+        color: #0d9488;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        display: inline-block;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h2>Consultations</h2>
+        <p>View and manage patient consultation records</p>
+    </div>
+    <a href="/Staff/CreateConsultation" class="add-btn">
+        <i class="fa-solid fa-plus"></i> New Consultation
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7; color:#16a34a; padding:14px 20px; border-radius:14px; margin-bottom:20px; font-weight:600;">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
+}
+
+<div class="filter-bar">
+    <div class="filter-group">
+        <div class="filter-label">Search Patient</div>
+        <input type="text" id="searchInput" class="filter-input" placeholder="Patient name or doctor notes..." style="width:240px;" oninput="filterTable()" />
+    </div>
+    <button class="clear-btn" onclick="clearFilters()">Clear</button>
+</div>
+
+<div class="result-count" id="resultCount">@Model.Count consultation(s) found</div>
+
+<div class="table-modern">
+    <div class="section-label">
+        All Consultations <span class="count-badge">@Model.Count</span>
+    </div>
+    <table class="table" id="consultationsTable">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Doctor Notes</th>
+                <th>Prescription</th>
+                <th>Follow-up Date</th>
+                <th>Date Created</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="patient-avatar">
+                                    @(c.Appointment?.Patient?.FullName?.Substring(0, 1).ToUpper() ?? "P")
+                                </div>
+                                <strong>@c.Appointment?.Patient?.FullName</strong>
+                            </div>
+                        </td>
+                        <td>@(c.DoctorNotes?.Length > 35 ? c.DoctorNotes.Substring(0, 35) + "..." : c.DoctorNotes)</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(c.Prescription))
+                            {
+                                <span class="prescription-tag">
+                                    <i class="fa-solid fa-pills"></i>
+                                    @(c.Prescription.Length > 25 ? c.Prescription.Substring(0, 25) + "..." : c.Prescription)
+                                </span>
+                            }
+                            else
+                            {
+
+                                <span style="color:#94a3b8;">—</span>
+                            }
+                        </td>
+                        <td>@(c.FollowUpDate.HasValue ? c.FollowUpDate.Value.ToString("MMM dd, yyyy") : "—")</td>
+                        <td>@c.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <button class="action-btn btn-view"
+                                    onclick="openModal(
+                                '@(c.Appointment?.Patient?.FullName ?? "Unknown")',
+                                '@c.CreatedAt.ToString("MMMM dd, yyyy")',
+                                '@(c.Diagnosis ?? "—")',
+                                '@(c.DoctorNotes?.Replace("'", "\\'").Replace("\n", "\\n") ?? "—")',
+                                '@(c.Prescription?.Replace("'", "\\'").Replace("\n", "\\n") ?? "—")',
+                                '@(c.FollowUpDate.HasValue ? c.FollowUpDate.Value.ToString("MMMM dd, yyyy") : "None")',
+                                '@(c.Appointment?.DoctorName ?? "—")'
+                                )">
+                                <i class="fa-solid fa-eye"></i> Details
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6"><div class="empty-state">No consultations yet.</div></td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-title" id="modalPatient"></div>
+        <div class="modal-subtitle" id="modalDate"></div>
+        <div class="detail-grid">
+            <div>
+                <div class="detail-label">Doctor</div>
+                <div class="detail-value" id="modalDoctor"></div>
+            </div>
+            <div>
+                <div class="detail-label">Follow-up Date</div>
+                <div class="detail-value" id="modalFollowUp"></div>
+            </div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Diagnosis</div>
+            <div class="detail-value"><span class="diagnosis-badge" id="modalDiagnosis"></span></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Doctor Notes</div>
+            <div class="detail-value" id="modalNotes"></div>
+        </div>
+        <div class="detail-row">
+            <div class="detail-label">Prescription</div>
+            <div class="detail-value" id="modalPrescription"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModal(patient, date, diagnosis, notes, prescription, followUp, doctor) {
+            document.getElementById('modalPatient').textContent = patient;
+            document.getElementById('modalDate').textContent = 'Consultation on ' + date;
+            document.getElementById('modalDoctor').textContent = 'Dr. ' + doctor;
+            document.getElementById('modalFollowUp').textContent = followUp;
+            document.getElementById('modalDiagnosis').textContent = diagnosis;
+            document.getElementById('modalNotes').innerHTML = notes.replace(/\\n/g, '<br>');
+            document.getElementById('modalPrescription').innerHTML = prescription.replace(/\\n/g, '<br>');
+            document.getElementById('modalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#consultationsTable tbody tr');
+            let count = 0;
+            rows.forEach(row => {
+                const name = row.cells[0]?.textContent.toLowerCase() ?? '';
+                const notes = row.cells[1]?.textContent.toLowerCase() ?? '';
+                const match = name.includes(search) || notes.includes(search);
+                row.style.display = match ? '' : 'none';
+                if (match) count++;
+            });
+            document.getElementById('resultCount').textContent = count + ' consultation(s) found';
+        }
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            filterTable();
+        }
+    </script>
+}

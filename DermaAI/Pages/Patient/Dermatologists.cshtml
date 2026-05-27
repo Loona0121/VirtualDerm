@@ -1,0 +1,177 @@
+﻿@model IEnumerable<DermaAI.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Dermatologists";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // keep your main layout
+}
+
+<style>
+    body {
+        background: #f8fafc;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .page-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+
+    /* GRID */
+    .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-top: 20px;
+    }
+
+    /* CARD */
+    .doc-card {
+        background: white;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+        transition: 0.2s ease;
+    }
+
+        .doc-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.1);
+        }
+
+    .doc-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2dd4bf, #60a5fa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .doc-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .doc-role {
+        font-size: 0.8rem;
+        color: #14b8a6;
+        font-weight: 600;
+    }
+
+    .doc-email {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 6px;
+        word-break: break-word;
+    }
+
+    .doc-footer {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .badge {
+        background: #ecfeff;
+        color: #0891b2;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .btn-book {
+        background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .btn-book:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+
+    /* RESPONSIVE */
+    @@media (max-width: 1000px) {
+        .doc-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .doc-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="page-header">
+        <div class="page-title">Available Dermatologists</div>
+        <div class="page-subtitle">Choose a specialist for your consultation</div>
+    </div>
+
+    <div class="doc-grid">
+
+        @foreach (var doc in Model)
+        {
+            <div class="doc-card">
+
+                <div class="doc-top">
+                    <div class="avatar">
+                        @doc.FullName?.Substring(0, 1).ToUpper()
+                    </div>
+
+                    <div>
+                        <p class="doc-name">@doc.FullName</p>
+                        <div class="doc-role">Dermatologist</div>
+                    </div>
+                </div>
+
+                <div class="doc-email">
+                    @doc.Email
+                </div>
+
+                <div class="doc-footer">
+                    <span class="badge">Available</span>
+
+                    <button class="btn-book">
+                        Book
+                    </button>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>

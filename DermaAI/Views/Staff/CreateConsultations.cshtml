@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "New Consultation";
+    Layout = "~/Views/Shared/_StaffLayout.cshtml";
+}
+
+<style>
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 36px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        max-width: 700px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.88rem;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-group-c {
+        margin-bottom: 18px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        border-radius: 12px;
+        border: 1.5px solid #e2e8f0;
+        padding: 12px 16px;
+        font-size: 0.92rem;
+        background: #f8fafc;
+        transition: 0.2s;
+    }
+
+        .form-control-custom:focus {
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
+            outline: none;
+            background: white;
+        }
+
+    .save-btn {
+        background: linear-gradient(135deg,#2dd4bf,#14b8a6);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .cancel-btn {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        margin-left: 12px;
+    }
+</style>
+
+<div style="margin-bottom:28px;">
+    <h2 style="font-size:2.1rem; font-weight:700; color:#0f172a; margin-bottom:5px;">New Consultation</h2>
+    <p style="color:#94a3b8; margin:0;">Create a new consultation record for a patient</p>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div style="background:#fee2e2; color:#dc2626; padding:14px 20px; border-radius:14px; margin-bottom:20px; font-weight:600;">
+        <i class="fa-solid fa-circle-xmark"></i> @TempData["Error"]
+    </div>
+}
+
+<div class="form-card">
+    <form method="post" action="/Staff/SaveConsultation">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group-c">
+            <label class="form-label">Appointment</label>
+            <select name="AppointmentId" class="form-control-custom">
+                <option value="">Select appointment</option>
+                @{
+                    var appointments = ViewBag.Appointments as List<DermaAI.Models.Appointment>;
+                }
+                @if (appointments != null)
+                {
+                    @foreach (var a in appointments)
+                    {
+                        <option value="@a.Id">
+                            @a.Patient?.FullName — Dr. @a.DoctorName — @a.ScheduledDate.ToString("MMM dd, yyyy")
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group-c">
+            <label class="form-label">Diagnosis</label>
+            <input type="text" name="Diagnosis" class="form-control-custom"
+                   placeholder="Enter diagnosis (e.g. Eczema, Psoriasis, Acne)" />
+        </div>
+
+        <div class="form-group-c">
+            <label class="form-label">Doctor Notes</label>
+            <textarea name="DoctorNotes" class="form-control-custom" rows="4"
+                      placeholder="Enter doctor notes and observations"></textarea>
+        </div>
+
+        <div class="form-group-c">
+            <label class="form-label">Prescription</label>
+            <textarea name="Prescription" class="form-control-custom" rows="3"
+                      placeholder="Enter prescription details"></textarea>
+        </div>
+
+        <div class="form-group-c">
+            <label class="form-label">Follow-up Date <span style="color:#94a3b8; font-weight:400;">(optional)</span></label>
+            <input type="date" name="FollowUpDate" class="form-control-custom" />
+        </div>
+
+        <div style="display:flex; align-items:center; margin-top:8px;">
+            <button type="submit" class="save-btn">
+                <i class="fa-solid fa-floppy-disk"></i> Save Consultation
+            </button>
+            <a href="/Staff/Consultations" class="cancel-btn">Cancel</a>
+        </div>
+    </form>
+</div>

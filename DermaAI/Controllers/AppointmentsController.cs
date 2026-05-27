@@ -26,7 +26,7 @@ namespace DermaAI.Controllers
             {
                 appointments = appointments.Where(a =>
                     a.Patient.FullName.Contains(search) ||
-                    a.DoctorName.Contains(search));
+                    a.DoctorId.Contains(search));
             }
 
             // Filter by status
@@ -76,7 +76,7 @@ namespace DermaAI.Controllers
             var appointment = new Appointment
             {
                 PatientId = PatientId,
-                DoctorName = DoctorName,
+                DoctorId = DoctorName,
                 ScheduledDate = ScheduledDate,
                 Status = Status ?? "Pending",
                 Notes = Notes,
@@ -112,7 +112,7 @@ namespace DermaAI.Controllers
             if (appointment == null) return NotFound();
 
             appointment.PatientId = PatientId;
-            appointment.DoctorName = DoctorName;
+            appointment.DoctorId = DoctorName;
             appointment.ScheduledDate = ScheduledDate;
             appointment.Status = Status ?? "Pending";
             appointment.Notes = Notes;
