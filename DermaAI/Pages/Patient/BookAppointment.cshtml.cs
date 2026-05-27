@@ -36,7 +36,13 @@ namespace DermaAI.Pages.Patient
             public string? Notes { get; set; }
         }
 
-        public void OnGet() { }
+        public void OnGet()
+        {
+            Input = new InputModel
+            {
+                ScheduledDate = DateTime.Today
+            };
+        }
 
         public async Task<IActionResult> OnPostAsync()
         {

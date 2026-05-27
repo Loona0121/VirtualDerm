@@ -268,6 +268,25 @@
         </div>
     </nav>
 
+    <!-- Cancel Modal -->
+    <div id="cancelModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:white; border-radius:20px; padding:32px; max-width:400px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+            <div style="width:60px; height:60px; background:#fff1f2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                <i class="fa-solid fa-calendar-xmark" style="color:#dc2626; font-size:1.5rem;"></i>
+            </div>
+            <h3 style="font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Cancel Appointment</h3>
+            <p style="color:#64748b; font-size:0.9rem; margin-bottom:24px;">Are you sure you want to cancel this appointment?</p>
+            <div style="display:flex; gap:12px;">
+                <button onclick="document.getElementById('cancelModal').style.display='none'" style="flex:1; height:44px; border-radius:10px; border:1.5px solid #e2e8f0; background:white; font-weight:600; cursor:pointer; color:#64748b;">No, Keep it</button>
+                <form id="cancelForm" method="post" asp-page-handler="Cancel" style="flex:1; margin:0">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="cancelAppointmentId" name="appointmentId" value="" />
+                    <button type="submit" style="width:100%; height:44px; border-radius:10px; border:none; background:linear-gradient(135deg, #f87171, #dc2626); color:white; font-weight:700; cursor:pointer;">Yes, Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         @if (TempData["Success"] != null)
         {
@@ -300,16 +319,13 @@
                         <div class="appt-info">
                             <h3><i class="fa-solid fa-user-doctor"></i> @appt.DoctorName</h3>
                             <p class="date"><i class="fa-solid fa-calendar"></i> @appt.ScheduledDate.ToString("MMMM dd, yyyy")</p>
-                            <p>@appt.Notes</p>
+                            <p>[@appt.ScheduledDate.ToString("h:mm tt")] @appt.Notes</p>
                         </div>
                         <div class="appt-actions">
                             <span class="status-badge status-@appt.Status">@appt.Status</span>
                             @if (appt.Status != "Cancelled")
                             {
-                                <form method="post" asp-page-handler="Cancel">
-                                    <input type="hidden" name="appointmentId" value="@appt.Id" />
-                                    <button type="submit" class="cancel-btn" onclick="return confirm('Cancel this appointment?')">Cancel</button>
-                                </form>
+                                <button type="button" class="cancel-btn" onclick="showCancelModal(@appt.Id)">Cancel</button>
                             }
                         </div>
                     </div>
@@ -351,6 +367,11 @@
                 document.querySelectorAll('.tab').forEach((t, i) => {
                     t.classList.toggle('active', (tab === 'upcoming' && i === 0) || (tab === 'past' && i === 1));
                 });
+            }
+
+            function showCancelModal(id) {
+                document.getElementById('cancelAppointmentId').value = id;
+                document.getElementById('cancelModal').style.display = 'flex';
             }
     </script>
 </body>

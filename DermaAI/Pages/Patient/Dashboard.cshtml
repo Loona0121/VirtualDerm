@@ -244,7 +244,7 @@
 
     <div class="container">
         <div class="welcome">
-            <h1>Welcome back, @Model.PatientName! 👋</h1>
+            <h1>@(Model.IsNewUser ? "Welcome" : "Welcome back"), @Model.PatientName! 👋</h1>
             <p>Here's your health summary for today.</p>
         </div>
 

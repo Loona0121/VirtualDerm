@@ -294,7 +294,9 @@
                         <label>Date</label>
                         <div class="input-box">
                             <i class="fa-solid fa-calendar"></i>
-                            <input asp-for="Input.ScheduledDate" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <input asp-for="Input.ScheduledDate" type="date" class="form-control"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                   value="@DateTime.Today.ToString("yyyy-MM-dd")" />
                         </div>
                         <span asp-validation-for="Input.ScheduledDate" class="text-danger"></span>
                     </div>

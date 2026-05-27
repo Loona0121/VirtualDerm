@@ -24,12 +24,14 @@ namespace DermaAI.Pages.Patient
         public int UpcomingAppointments { get; set; }
         public int PastConsultations { get; set; }
         public int TotalAppointments { get; set; }
+        public bool IsNewUser { get; set; }
 
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             PatientName = user?.FullName ?? "Patient";
 
+            // New user kung walang appointments at consultations pa
             var today = DateTime.Today;
 
             var patient = await _context.Patients
@@ -53,6 +55,12 @@ namespace DermaAI.Pages.Patient
                 PastConsultations = await _context.Consultations
                     .Where(c => patientAppointmentIds.Contains(c.AppointmentId))
                     .CountAsync();
+
+                IsNewUser = TotalAppointments == 0 && PastConsultations == 0;
+            }
+            else
+            {
+                IsNewUser = true;
             }
         }
     }
