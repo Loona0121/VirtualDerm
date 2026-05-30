@@ -1,0 +1,223 @@
+﻿@model List<DermaAI.Models.Patient>
+
+@{
+    ViewData["Title"] = "Patients";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #94a3b8;
+        }
+
+    .table-modern {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #edf2f7;
+        overflow: hidden;
+    }
+
+    .patient-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#2dd4bf,#60a5fa);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-view {
+        background: #e0f2fe;
+        color: #0ea5e9;
+    }
+
+        .btn-view:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+    /* MODAL */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15,23,42,0.55);
+        backdrop-filter: blur(6px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-card {
+        width: 420px;
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #edf2f7;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 18px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+    .close-btn {
+        background: #f1f5f9;
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .modal-body {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #f1f5f9;
+    }
+
+    .label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+    }
+
+    .value {
+        font-weight: 600;
+        color: #0f172a;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <h2>Patients</h2>
+        <p>Manage registered patients</p>
+    </div>
+</div>
+
+<p>Total Patients: @Model.Count</p>
+
+<div class="table-modern">
+    <table class="table" id="patientsTable">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="patient-avatar">
+                                @(p.FullName?.Substring(0, 1).ToUpper() ?? "P")
+                            </div>
+                            <strong>@p.FullName</strong>
+                        </div>
+                    </td>
+
+                    <td>
+                        <button class="action-btn btn-view"
+                                onclick="openPatientModal('@p.FullName')">
+                            View
+                        </button>
+
+                        |
+                        <a href="/Patients/Edit/@p.Id">Edit</a> |
+                        <a href="/Patients/Delete/@p.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- MODAL -->
+<div id="patientModal" class="modal-overlay">
+    <div class="modal-card">
+
+        <div class="modal-header">
+            <h2>Patient Details</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="info-row">
+                <span class="label">Name</span>
+                <span id="mName" class="value"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function openPatientModal(name) {
+        document.getElementById("mName").innerText = name;
+
+        document.getElementById("patientModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("patientModal").style.display = "none";
+    }
+
+    window.addEventListener("click", function (event) {
+        const modal = document.getElementById("patientModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+</script>

@@ -17,66 +17,93 @@ namespace DermaAI.Controllers
         // GET: APPOINTMENTS
         public async Task<IActionResult> Index(string? search, string? status, string? date)
         {
+            if (_context.Appointments == null)
+                return NotFound("Appointments data set is missing.");
+
             var appointments = _context.Appointments
                 .Include(a => a.Patient)
+                .AsNoTracking()           // ✅ faster reads, no change tracking needed
                 .AsQueryable();
 
-            // Filter by patient name
             if (!string.IsNullOrEmpty(search))
             {
                 appointments = appointments.Where(a =>
-                    a.Patient.FullName.Contains(search) ||
-                    a.DoctorId.Contains(search));
+                    a.Patient != null &&
+                    a.Patient.FullName != null &&
+                    a.Patient.FullName.Contains(search));
             }
 
-            // Filter by status
             if (!string.IsNullOrEmpty(status))
-            {
                 appointments = appointments.Where(a => a.Status == status);
-            }
 
-            // Filter by date
             if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out var parsedDate))
-            {
                 appointments = appointments.Where(a => a.ScheduledDate.Date == parsedDate.Date);
-            }
 
             ViewBag.Search = search;
             ViewBag.Status = status;
             ViewBag.Date = date;
 
-            return View(await appointments.OrderByDescending(a => a.ScheduledDate).ToListAsync());
+            return View(await appointments
+                .OrderByDescending(a => a.ScheduledDate)
+                .ToListAsync());
         }
 
-        // GET: APPOINTMENTS/Details/5
+        // GET: DETAILS
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null || _context.Appointments == null)
+                return NotFound();
 
             var appointment = await _context.Appointments
                 .Include(a => a.Patient)
+                .AsNoTracking()           // ✅ read-only, no tracking needed
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (appointment == null) return NotFound();
+            if (appointment == null)
+                return NotFound();
 
             return View(appointment);
         }
 
-        // GET: APPOINTMENTS/Create
-        public IActionResult Create()
+        // GET: CREATE
+        public async Task<IActionResult> Create()    // ✅ was sync, now async
         {
-            ViewBag.Patients = _context.Patients.ToList();
+            if (_context.Patients == null)
+                return NotFound("Patients data set is missing.");
+
+            ViewBag.Patients = await _context.Patients
+                .AsNoTracking()
+                .OrderBy(p => p.FullName)
+                .ToListAsync();            // ✅ was blocking .ToList()
+
             return View();
         }
 
+        // POST: CREATE
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int PatientId, string DoctorName, DateTime ScheduledDate, string Status, string? Notes)
+        public async Task<IActionResult> Create(
+            string PatientId,
+            DateTime ScheduledDate,
+            string? Status,
+            string? Notes)
         {
+            if (_context.Appointments == null)
+                return Problem("Appointments DbSet is null.");
+
+            // ✅ Parse to int first — avoids slow .ToString() comparison on every row
+            if (!int.TryParse(PatientId, out int patientIdInt))
+                return BadRequest("Invalid Patient ID.");
+
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.Id == patientIdInt);  // ✅ int comparison, uses index
+
+            if (patient == null)
+                return NotFound("Patient not found.");
+
             var appointment = new Appointment
             {
-                PatientId = PatientId,
-                DoctorId = DoctorName,
+                Patient = patient,
                 ScheduledDate = ScheduledDate,
                 Status = Status ?? "Pending",
                 Notes = Notes,
@@ -85,66 +112,97 @@ namespace DermaAI.Controllers
 
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: APPOINTMENTS/Edit/5
+        // GET: EDIT
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null || _context.Appointments == null)
+                return NotFound();
 
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null) return NotFound();
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (appointment == null)
+                return NotFound();
 
             ViewBag.Patients = await _context.Patients
+                .AsNoTracking()           // ✅ read-only dropdown list
                 .OrderBy(p => p.FullName)
                 .ToListAsync();
 
             return View(appointment);
         }
 
-        // POST: APPOINTMENTS/Edit/5
+        // POST: EDIT
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int PatientId, string DoctorName, DateTime ScheduledDate, string Status, string? Notes, DateTime CreatedAt)
+        public async Task<IActionResult> Edit(
+            int id,
+            string PatientId,
+            DateTime ScheduledDate,
+            string? Status,
+            string? Notes)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null) return NotFound();
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            appointment.PatientId = PatientId;
-            appointment.DoctorId = DoctorName;
+            if (appointment == null)
+                return NotFound();
+
+            // ✅ Parse to int first — avoids slow .ToString() comparison on every row
+            if (!int.TryParse(PatientId, out int patientIdInt))
+                return BadRequest("Invalid Patient ID.");
+
+            var patient = await _context.Patients
+                .FirstOrDefaultAsync(p => p.Id == patientIdInt);  // ✅ int comparison, uses index
+
+            if (patient == null)
+                return NotFound("Patient not found.");
+
+            appointment.Patient = patient;
             appointment.ScheduledDate = ScheduledDate;
             appointment.Status = Status ?? "Pending";
             appointment.Notes = Notes;
-            appointment.CreatedAt = CreatedAt;
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        // GET: APPOINTMENTS/Delete/5
+
+        // GET: DELETE
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null || _context.Appointments == null)
+                return NotFound();
 
             var appointment = await _context.Appointments
                 .Include(a => a.Patient)
+                .AsNoTracking()           // ✅ read-only confirm page
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (appointment == null) return NotFound();
+            if (appointment == null)
+                return NotFound();
 
             return View(appointment);
         }
 
-        // POST: APPOINTMENTS/Delete/5
+        // POST: DELETE
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment != null)
-                _context.Appointments.Remove(appointment);
 
-            await _context.SaveChangesAsync();
+            if (appointment != null)
+            {
+                _context.Appointments.Remove(appointment);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }

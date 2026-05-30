@@ -82,7 +82,7 @@
             <option value="">-- Select Appointment --</option>
             @foreach (var a in appointments)
             {
-                <option value="@a.Id">@a.Patient?.FullName — Dr. @a.DoctorName (@a.ScheduledDate.ToString("MMM dd, yyyy"))</option>
+                <option value="@a.Id">@a.Patient?.FullName — Dr. @a.DoctorId (@a.ScheduledDate.ToString("MMM dd, yyyy"))</option>
             }
         </select>
 

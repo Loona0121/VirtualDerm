@@ -16,5 +16,6 @@ namespace DermaAI.Data
         public DbSet<Consultation> Consultations { get; set; }
         public DbSet<ChatSession> ChatSessions { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
     }
 }

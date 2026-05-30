@@ -60,17 +60,18 @@ namespace DermaAI.Pages.Auth
 
                 if (roles.Contains("Admin"))
                 {
-                    return RedirectToAction("Dashboard", "Admin");
+                    return RedirectToAction("Dashboard", "Admin"); // Keep if Admin uses MVC
                 }
 
-                if (roles.Contains("Staff"))
+                if (roles.Contains("Dermatologist"))
                 {
-                    return RedirectToAction("Dashboard", "Staff");
+                    return RedirectToAction("Dashboard", "Staff"); // Keep if Staff uses MVC
                 }
 
                 if (roles.Contains("Patient"))
                 {
-                    return RedirectToAction("Dashboard", "Patient");
+                    // Switch this to RedirectToPage to load Pages/Patient/Dashboard.cshtml!
+                    return RedirectToPage("/Patient/Dashboard");
                 }
 
                 return RedirectToAction("Landing", "Home");

@@ -5,14 +5,14 @@
 namespace DermaAI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDiagnosis : Migration
+    public partial class AddDoctorNavigation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Diagnosis",
-                table: "Consultations",
+                name: "UserId",
+                table: "Doctors",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -21,8 +21,8 @@ namespace DermaAI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Diagnosis",
-                table: "Consultations");
+                name: "UserId",
+                table: "Doctors");
         }
     }
 }

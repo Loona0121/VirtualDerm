@@ -28,7 +28,7 @@ namespace DermaAI.Pages.Patient
             if (patient != null)
             {
                 var appointmentIds = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id)
+                    .Where(a => a.Patient != null && a.Patient.Id == patient.Id)
                     .Select(a => a.Id)
                     .ToListAsync();
 

@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<WarningsNotAsErrors>8600;8602;8603;8618;8625</WarningsNotAsErrors>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
@@ -19,7 +20,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Areas\" />
+		<Folder Include="Areas\" />
+		<Folder Include="Migrations\" />
 	</ItemGroup>
 
 </Project>

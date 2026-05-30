@@ -41,11 +41,11 @@
 <div class="form-card">
     <form asp-action="Edit">
         <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="CreatedAt" />
 
         <label class="form-label">Patient</label>
         <select name="PatientId" class="patient-select">
             <option value="">-- Select Patient --</option>
+
             @foreach (var p in patients)
             {
                 if (p.Id == Model.PatientId)
@@ -60,7 +60,7 @@
         </select>
 
         <label class="form-label">Doctor Name</label>
-        <input asp-for="DoctorName" class="form-control" placeholder="e.g. Dr. Juan Santos" />
+        <input asp-for="DoctorId" class="form-control" placeholder="e.g. Dr. Juan Santos" />
 
         <label class="form-label">Scheduled Date & Time</label>
         <input asp-for="ScheduledDate" type="datetime-local" class="form-control" />

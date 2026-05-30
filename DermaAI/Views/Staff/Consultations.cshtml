@@ -369,12 +369,12 @@
                             <button class="action-btn btn-view"
                                     onclick="openModal(
                                 '@(c.Appointment?.Patient?.FullName ?? "Unknown")',
-                                '@c.CreatedAt.ToString("MMMM dd, yyyy")',
+                                '@(c.CreatedAt.ToString("MMMM dd, yyyy"))',
                                 '@(c.Diagnosis ?? "—")',
                                 '@(c.DoctorNotes?.Replace("'", "\\'").Replace("\n", "\\n") ?? "—")',
                                 '@(c.Prescription?.Replace("'", "\\'").Replace("\n", "\\n") ?? "—")',
                                 '@(c.FollowUpDate.HasValue ? c.FollowUpDate.Value.ToString("MMMM dd, yyyy") : "None")',
-                                '@(c.Appointment?.DoctorName ?? "—")'
+                                '@(c.Appointment?.Doctor?.FullName ?? "—")'
                                 )">
                                 <i class="fa-solid fa-eye"></i> Details
                             </button>

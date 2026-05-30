@@ -2,404 +2,305 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model DermaAI.Pages.Patient.ProfileModel
 @{
-    Layout = null;
+    Layout = "~/Pages/Shared/_PatientLayout.cshtml";
     ViewData["Title"] = "My Profile";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Profile - VirtualDerm</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Segoe UI', sans-serif;
-            }
+<style>
+    /* Scoped page styling ONLY (no layout conflicts) */
 
-            body {
-                background: linear-gradient(160deg, #f0fdf9 0%, #e0f2fe 100%);
-                min-height: 100vh;
-            }
+    .profile-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 24px;
+        box-sizing: border-box;
+    }
 
-            .navbar {
-                background: white;
-                padding: 16px 32px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            }
+    .page-header {
+        margin-bottom: 28px;
+    }
 
-            .navbar-brand {
-                font-size: 1.3rem;
-                font-weight: 800;
-                color: #0f172a;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .navbar-brand-icon {
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
-                background: linear-gradient(135deg, #2dd4bf, #60a5fa);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-            }
-
-            .navbar-links {
-                display: flex;
-                gap: 24px;
-                align-items: center;
-            }
-
-                .navbar-links a {
-                    text-decoration: none;
-                    color: #64748b;
-                    font-weight: 500;
-                    font-size: 0.9rem;
-                }
-
-                    .navbar-links a:hover, .navbar-links a.active {
-                        color: #14b8a6;
-                    }
-
-            .logout-btn {
-                background: #f1f5f9;
-                border: none;
-                padding: 8px 18px;
-                border-radius: 8px;
-                color: #0f172a;
-                font-weight: 600;
-                cursor: pointer;
-                font-size: 0.88rem;
-            }
-
-            .container {
-                max-width: 700px;
-                margin: 40px auto;
-                padding: 0 24px;
-            }
-
-            .page-header {
-                margin-bottom: 28px;
-            }
-
-                .page-header h1 {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    color: #0f172a;
-                }
-
-                .page-header p {
-                    color: #64748b;
-                    margin-top: 6px;
-                }
-
-            .card {
-                background: white;
-                border-radius: 20px;
-                padding: 36px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-                margin-bottom: 20px;
-            }
-
-                .card h2 {
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    color: #0f172a;
-                    margin-bottom: 20px;
-                    padding-bottom: 12px;
-                    border-bottom: 1px solid #e2e8f0;
-                }
-
-            .form-group {
-                margin-bottom: 18px;
-            }
-
-                .form-group label {
-                    display: block;
-                    font-weight: 600;
-                    color: #0f172a;
-                    font-size: 0.88rem;
-                    margin-bottom: 8px;
-                }
-
-            .input-box {
-                position: relative;
-            }
-
-                .input-box i {
-                    position: absolute;
-                    left: 14px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #94a3b8;
-                    font-size: 0.88rem;
-                }
-
-            .form-control {
-                width: 100%;
-                height: 48px;
-                border-radius: 12px;
-                border: 1.5px solid #e2e8f0;
-                padding: 0 16px 0 42px;
-                font-size: 0.9rem;
-                background: #f8fafc;
-                color: #0f172a;
-                transition: 0.2s;
-            }
-
-                .form-control:focus {
-                    border-color: #14b8a6;
-                    box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
-                    outline: none;
-                    background: white;
-                }
-
-                .form-control:disabled {
-                    background: #f1f5f9;
-                    color: #94a3b8;
-                }
-
-            select.form-control {
-                appearance: none;
-            }
-
-            textarea.form-control {
-                height: 100px;
-                padding-top: 14px;
-                resize: none;
-            }
-
-            .form-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-
-            .save-btn {
-                width: 100%;
-                height: 50px;
-                border: none;
-                border-radius: 12px;
-                background: linear-gradient(135deg, #2dd4bf, #14b8a6);
-                color: white;
-                font-size: 0.95rem;
-                font-weight: 700;
-                cursor: pointer;
-                transition: 0.25s;
-            }
-
-                .save-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 24px rgba(20,184,166,0.3);
-                }
-
-            .alert-success {
-                background: #f0fdf4;
-                border: 1px solid #86efac;
-                color: #166534;
-                padding: 14px 18px;
-                border-radius: 12px;
-                margin-bottom: 20px;
-            }
-
-            .alert-info {
-                background: #eff6ff;
-                border: 1px solid #93c5fd;
-                color: #1e40af;
-                padding: 14px 18px;
-                border-radius: 12px;
-                margin-bottom: 20px;
-                font-size: 0.88rem;
-            }
-
-            .text-danger {
-                font-size: 0.78rem;
-                color: #dc2626;
-                margin-top: 4px;
-                display: block;
-            }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <div class="navbar-brand-icon"><i class="fa-solid fa-stethoscope"></i></div>
-            VirtualDerm
-        </div>
-        <div class="navbar-links">
-            <a href="/Patient/Dashboard">Dashboard</a>
-            <a href="/Patient/Appointments">Appointments</a>
-            <a href="/Patient/Consultations">Consultations</a>
-            <a href="/Patient/AIAssistant">AI Assistant</a>
-            <a href="/Patient/Profile" class="active">Profile</a>
-            <button type="button" class="logout-btn" onclick="document.getElementById('logoutModal').style.display='flex'">Logout</button>
-
-            <!-- Logout Modal -->
-            <div id="logoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
-                <div style="background:white; border-radius:20px; padding:32px; max-width:400px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-                    <div style="width:60px; height:60px; background:#f0fdf9; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
-                        <i class="fa-solid fa-right-from-bracket" style="color:#14b8a6; font-size:1.5rem;"></i>
-                    </div>
-                    <h3 style="font-size:1.2rem; font-weight:700; color:#0f172a; margin-bottom:8px;">Logout</h3>
-                    <p style="color:#64748b; font-size:0.9rem; margin-bottom:24px;">Are you sure you want to logout from VirtualDerm?</p>
-                    <div style="display:flex; gap:12px;">
-                        <button onclick="document.getElementById('logoutModal').style.display='none'" style="flex:1; height:44px; border-radius:10px; border:1.5px solid #e2e8f0; background:white; font-weight:600; cursor:pointer; color:#64748b;">Cancel</button>
-                        <form method="post" asp-page="/Auth/Logout" style="flex:1; margin:0">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" style="width:100%; height:44px; border-radius:10px; border:none; background:linear-gradient(135deg, #2dd4bf, #14b8a6); color:white; font-weight:700; cursor:pointer;">Yes, Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert-success"><i class="fa-solid fa-circle-check"></i> @TempData["Success"]</div>
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
         }
 
-        @if (!Model.HasPatientRecord)
-        {
-            <div class="alert-info">
-                <i class="fa-solid fa-circle-info"></i> Please complete your profile before booking an appointment.
-            </div>
+        .page-header p {
+            color: #64748b;
+            margin-top: 6px;
         }
 
-        <div class="page-header">
-            <h1>My Profile</h1>
-            <p>View and edit your personal information.</p>
+    .card {
+        background: white;
+        border-radius: 20px;
+        padding: 36px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        .card h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+        }
+
+    .input-box {
+        position: relative;
+    }
+
+        .input-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.88rem;
+        }
+
+    .form-control {
+        width: 100%;
+        height: 48px;
+        border-radius: 12px;
+        border: 1.5px solid #e2e8f0;
+        padding: 0 16px 0 42px;
+        font-size: 0.9rem;
+        background: #f8fafc;
+        color: #0f172a;
+        box-sizing: border-box;
+    }
+
+        .form-control:focus {
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 3px rgba(20,184,166,0.12);
+            outline: none;
+            background: white;
+        }
+
+        .form-control:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+
+    textarea.form-control {
+        height: 100px;
+        padding-top: 14px;
+        resize: none;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .save-btn {
+        width: 100%;
+        height: 50px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+        color: white;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .alert-success {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        color: #166534;
+        padding: 14px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .alert-info {
+        background: #eff6ff;
+        border: 1px solid #93c5fd;
+        color: #1e40af;
+        padding: 14px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .text-danger {
+        font-size: 0.78rem;
+        color: #dc2626;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* MOBILE FIX */
+    @@media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="profile-container">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-success">
+            <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
         </div>
+    }
 
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger" style="margin-bottom:16px"></div>
+    @if (!Model.HasPatientRecord)
+    {
+        <div class="alert-info">
+            <i class="fa-solid fa-circle-info"></i>
+            Please complete your profile before booking an appointment.
+        </div>
+    }
 
-            <div class="card">
-                <h2><i class="fa-solid fa-user"></i> Personal Information</h2>
-
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <div class="input-box">
-                        <i class="fa-regular fa-user"></i>
-                        <input asp-for="Input.FullName" class="form-control" placeholder="Your full name" />
-                    </div>
-                    <span asp-validation-for="Input.FullName" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <div class="input-box">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input asp-for="Input.Email" class="form-control" disabled />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Age</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-calendar"></i>
-                            <input asp-for="Input.Age" type="number" class="form-control" placeholder="Your age" />
-                        </div>
-                        <span asp-validation-for="Input.Age" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label>Sex</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-venus-mars"></i>
-                            <select asp-for="Input.Sex" class="form-control">
-                                <option value="">Select sex</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                            </select>
-                        </div>
-                        <span asp-validation-for="Input.Sex" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Address</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <input asp-for="Input.Address" class="form-control" placeholder="Your address" />
-                    </div>
-                    <span asp-validation-for="Input.Address" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label>Contact Number</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-phone"></i>
-                        <input asp-for="Input.ContactNumber" class="form-control" placeholder="e.g. 09123456789" />
-                    </div>
-                    <span asp-validation-for="Input.ContactNumber" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><i class="fa-solid fa-heart-pulse"></i> Medical History</h2>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Blood Type</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-droplet"></i>
-                            <select asp-for="Input.BloodType" class="form-control">
-                                <option value="">Select blood type</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Allergies</label>
-                        <div class="input-box">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            <input asp-for="Input.Allergies" class="form-control" placeholder="e.g. Penicillin, Pollen" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Current Medications</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-pills"></i>
-                        <input asp-for="Input.CurrentMedications" class="form-control" placeholder="e.g. Metformin 500mg" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Medical History / Skin Conditions</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-notes-medical" style="top:18px"></i>
-                        <textarea asp-for="Input.MedicalHistory" class="form-control" placeholder="e.g. Eczema, Psoriasis, Diabetes..."></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="save-btn">
-                <i class="fa-solid fa-floppy-disk"></i> Save Profile
-            </button>
-        </form>
+    <div class="page-header">
+        <h1>My Profile</h1>
+        <p>View and edit your personal information.</p>
     </div>
-    <partial name="_ValidationScriptsPartial" />
-</body>
-</html>
+
+    <form method="post">
+
+        <div class="card">
+            <h2><i class="fa-solid fa-user"></i> Personal Information</h2>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-box">
+                    <i class="fa-regular fa-user"></i>
+                    <input asp-for="Input.FullName" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-box">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input asp-for="Input.Email" class="form-control" disabled />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-calendar"></i>
+                        <input asp-for="Input.Age" type="number" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sex</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-venus-mars"></i>
+                        <select asp-for="Input.Sex" class="form-control">
+                            <option value="">Select sex</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input asp-for="Input.Address" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Contact Number</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-phone"></i>
+                    <input asp-for="Input.ContactNumber" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-heart-pulse"></i> Medical History</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Blood Type</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-droplet"></i>
+                        <select asp-for="Input.BloodType" class="form-control">
+                            <option value="">Select blood type</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Allergies</label>
+                    <div class="input-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <input asp-for="Input.Allergies" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Current Medications</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-pills"></i>
+                    <input asp-for="Input.CurrentMedications" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Medical History / Skin Conditions</label>
+                <div class="input-box">
+                    <i class="fa-solid fa-notes-medical"></i>
+                    <textarea asp-for="Input.MedicalHistory" class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="save-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Profile
+        </button>
+
+    </form>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

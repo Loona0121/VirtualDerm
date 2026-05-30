@@ -1,4 +1,3 @@
-
 using DermaAI.Data;
 using DermaAI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -10,69 +9,49 @@ namespace DermaAI.Pages.Patient
 {
     public class AppointmentsModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AppointmentsModel(
-            UserManager<ApplicationUser> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
             _context = context;
+            _userManager = userManager;
         }
-
-        public string PatientName { get; set; } = "Patient";
 
         public List<Appointment> UpcomingAppointments { get; set; } = new();
         public List<Appointment> PastAppointments { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
 
-            if (user != null)
-            {
-                PatientName = user.FullName;
-            }
+            if (user == null)
+                return RedirectToPage("/Auth/Login");
 
             var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.FullName == user!.FullName);
+                .FirstOrDefaultAsync(p => p.UserId == user.Id);
 
-            if (patient != null)
-            {
-                var today = DateTime.Today;
+            if (patient == null)
+                return Page();
 
-                UpcomingAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id &&
-                                a.ScheduledDate >= today)
-                    .OrderBy(a => a.ScheduledDate)
-                    .ToListAsync();
+            var allAppointments = await _context.Appointments
+               .AsNoTracking()
+               .Include(a => a.Doctor)       
+               .Where(a => a.PatientId == patient.Id)
+               .OrderByDescending(a => a.ScheduledDate)
+               .ToListAsync();
 
-                PastAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id &&
-                                a.ScheduledDate < today)
-                    .OrderByDescending(a => a.ScheduledDate)
-                    .ToListAsync();
-            }
-        }
+            UpcomingAppointments = allAppointments
+                .Where(a => a.ScheduledDate >= DateTime.Now)
+                .ToList();
 
-        public async Task<IActionResult> OnPostCancelAsync(int appointmentId)
-        {
-            var appointment = await _context.Appointments
-                .FindAsync(appointmentId);
+            PastAppointments = allAppointments
+                .Where(a => a.ScheduledDate < DateTime.Now)
+                .ToList();
 
-            if (appointment != null)
-            {
-                appointment.Status = "Cancelled";
-
-                await _context.SaveChangesAsync();
-
-                TempData["Success"] =
-                    "Appointment cancelled successfully.";
-            }
-
-            return RedirectToPage();
+            return Page();
         }
     }
 }
-

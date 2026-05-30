@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DermaAI.Data;
 using DermaAI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,16 @@ namespace DermaAI.Pages.Auth
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;  // ✅ added
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext context)  // ✅ added
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;  // ✅ added
         }
 
         [BindProperty]
@@ -32,7 +36,7 @@ namespace DermaAI.Pages.Auth
             public string Email { get; set; } = "";
 
             [Required]
-            public string Role { get; set; } = ""; // Dermatologist or Patient
+            public string Role { get; set; } = "";
 
             [Required]
             [DataType(DataType.Password)]
@@ -48,23 +52,17 @@ namespace DermaAI.Pages.Auth
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // 1. Validate role selection
             if (string.IsNullOrWhiteSpace(Input.Role))
             {
                 ModelState.AddModelError("Input.Role", "Please select a role.");
                 return Page();
             }
 
-            // 2. Validate form
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            // 3. Use EXACT role name from DB
             var assignedRole = Input.Role;
 
-            // 4. Create user
             var user = new ApplicationUser
             {
                 UserName = Input.Email,
@@ -78,32 +76,43 @@ namespace DermaAI.Pages.Auth
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
-                {
                     ModelState.AddModelError(string.Empty, error.Description);
-                }
                 return Page();
             }
 
-            // 5. Assign role (THIS IS WHAT FIXES YOUR DROPDOWN ISSUE)
             var roleResult = await _userManager.AddToRoleAsync(user, assignedRole);
 
             if (!roleResult.Succeeded)
             {
                 foreach (var error in roleResult.Errors)
-                {
                     ModelState.AddModelError(string.Empty, error.Description);
-                }
 
-                // optional cleanup if role fails
                 await _userManager.DeleteAsync(user);
-
                 return Page();
             }
 
-            // 6. Auto login
+            
+            if (assignedRole == "Patient")
+            {
+               
+                var patient = new DermaAI.Models.Patient
+                {
+                    UserId = user.Id,                    
+                    Name = Input.FullName,               
+                    FullName = Input.FullName,           
+                    Age = 0,                             
+                    Sex = "",                            
+                    Address = "",                        
+                    ContactNumber = "",                  
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.Patients.Add(patient);
+                await _context.SaveChangesAsync();
+            }
+
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            // 7. Redirect safely
             return RedirectToPage("/Index");
         }
     }

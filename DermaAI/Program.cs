@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
@@ -40,7 +39,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// ✅ ROLE SEEDING (FIXED)
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -58,6 +56,38 @@ using (var scope = app.Services.CreateScope())
         {
             await roleManager.CreateAsync(new IdentityRole(role));
         }
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    string[] roles = new[]
+    {
+        "Admin",
+        "Dermatologist",
+        "Patient"
+    };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    if (!context.Doctors.Any())
+    {
+        context.Doctors.AddRange(
+            new Doctor { FullName = "Dr. Smith", Specialty = "Dermatology" },
+            new Doctor { FullName = "Dr. Garcia", Specialty = "Skin Specialist" },
+            new Doctor { FullName = "Dr. Lopez", Specialty = "Cosmetic Dermatology" }
+        );
+
+        context.SaveChanges();
     }
 }
 

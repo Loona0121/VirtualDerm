@@ -5,21 +5,24 @@ namespace DermaAI.Models
     public class Patient
     {
         public int Id { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         [Required, StringLength(100)]
-        public string FullName { get; set; }
+        public string Name { get; set; } = string.Empty;       // ✅ default value
+
+        public string FullName { get; set; } = "";
 
         [Required]
         public int Age { get; set; }
 
         [Required]
-        public string Sex { get; set; }
+        public string Sex { get; set; } = "";
 
         [Required, StringLength(200)]
-        public string Address { get; set; }
+        public string Address { get; set; } = "";
 
         [Required, StringLength(20)]
-        public string ContactNumber { get; set; }
+        public string ContactNumber { get; set; } = "";
 
         public string? BloodType { get; set; }
         public string? Allergies { get; set; }

@@ -5,10 +5,10 @@
         public int Id { get; set; }
 
         public int AppointmentId { get; set; }
+
         public Appointment? Appointment { get; set; }
 
         public string DoctorNotes { get; set; } = "";
-        public string Diagnosis { get; set; }
 
         public string? Diagnosis { get; set; }
 

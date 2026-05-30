@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DermaAI.Controllers
 {
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "Dermatologist")]
     public class StaffController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -40,15 +40,15 @@ namespace DermaAI.Pages.Patient
             if (patient != null)
             {
                 UpcomingAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id && a.ScheduledDate >= today)
-                    .CountAsync();
+     .Where(a => a.Patient != null && a.Patient.Id == patient.Id && a.ScheduledDate >= today)
+     .CountAsync();
 
                 TotalAppointments = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id)
+                    .Where(a => a.Patient != null && a.Patient.Id == patient.Id)
                     .CountAsync();
 
                 var patientAppointmentIds = await _context.Appointments
-                    .Where(a => a.PatientId == patient.Id)
+                    .Where(a => a.Patient != null && a.Patient.Id == patient.Id)
                     .Select(a => a.Id)
                     .ToListAsync();
 

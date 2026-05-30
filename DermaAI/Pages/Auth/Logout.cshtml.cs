@@ -14,10 +14,10 @@ namespace DermaAI.Pages.Auth
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToPage("/Auth/Login");
+            return RedirectToPage("/Login");
         }
     }
 }
